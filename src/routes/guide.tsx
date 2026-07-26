@@ -360,47 +360,25 @@ function AdminUpload({
     }
     setBusy(true);
     try {
-      // 1. 拿七牛云上传凭证
-      const tokRes = await fetch("/api/qiniu-token", {
+      // 1. 上传到 Vercel Blob（经后端）
+      const fd = new FormData();
+      fd.append("file", file, file.name);
+      const upRes = await fetch("/api/upload", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Admin-Password": adminToken,
-        },
-        body: JSON.stringify({ fileName: file.name }),
+        headers: { "X-Admin-Password": adminToken },
+        body: fd,
       });
-      const tok = (await tokRes.json()) as {
+      const upJson = (await upRes.json()) as {
         ok: boolean;
-        token?: string;
-        key?: string;
-        domain?: string;
+        url?: string;
         error?: string;
       };
-      if (!tok.ok || !tok.token || !tok.key) {
-        throw new Error(tok.error ?? "获取上传凭证失败");
+      if (!upJson.ok || !upJson.url) {
+        throw new Error(upJson.error ?? "上传失败");
       }
+      const fileUrl = upJson.url;
 
-      // 2. 直传七牛云
-      const observable = qiniu.upload(
-        file,
-        tok.key,
-        tok.token,
-        { fname: file.name },
-        {},
-      );
-      await new Promise<void>((resolve, reject) => {
-        observable.subscribe({
-          next: () => {},
-          error: (err) => reject(err),
-          complete: () => resolve(),
-        });
-      });
-      const domain = (tok.domain ?? "").replace(/\/$/, "");
-      const fileUrl = domain
-        ? `${domain}/${tok.key}`
-        : `https://${tok.key}`;
-
-      // 3. 写入飞书
+      // 2. 写入飞书
       const addRes = await fetch("/api/add-record", {
         method: "POST",
         headers: {
