@@ -15,6 +15,7 @@ import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
 import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
@@ -50,6 +51,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
   id: '/api/get-files',
   path: '/api/get-files',
@@ -82,6 +88,7 @@ export interface FileRoutesByFullPath {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -94,6 +101,7 @@ export interface FileRoutesByTo {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
+    | '/api/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -133,6 +143,7 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
+    | '/api/upload'
   id:
     | '__root__'
     | '/'
@@ -145,6 +156,7 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
+    | '/api/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -158,6 +170,7 @@ export interface RootRouteChildren {
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiDeleteRecordRoute: typeof ApiDeleteRecordRoute
   ApiGetFilesRoute: typeof ApiGetFilesRoute
+  ApiUploadRoute: typeof ApiUploadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/get-files': {
       id: '/api/get-files'
       path: '/api/get-files'
@@ -246,6 +266,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiDeleteRecordRoute: ApiDeleteRecordRoute,
   ApiGetFilesRoute: ApiGetFilesRoute,
+  ApiUploadRoute: ApiUploadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
