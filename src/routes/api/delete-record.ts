@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { deleteRecord, getRecord } from "@/lib/feishu.server";
-import { deleteQiniuFile, extractKeyFromUrl } from "@/lib/qiniu.server";
+import { deleteRecord } from "@/lib/feishu.server";
 
 function checkAuth(request: Request): boolean {
   const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
@@ -23,24 +22,8 @@ export const Route = createFileRoute("/api/delete-record")({
               { status: 400, headers: { "content-type": "application/json" } },
             );
           }
-          // 读取记录以获取 file_url
-          const record = await getRecord(body.id);
-          const fileUrl =
-            (record?.fields?.file_url as string) ??
-            (record?.fields?.["链接"] as string) ??
-            "";
-
-          // 先删飞书行
+          // 删除飞书行；Vercel Blob 文件后续手动清理
           await deleteRecord(body.id);
-
-          // 再尝试删七牛文件（失败不阻塞）
-          if (fileUrl) {
-            try {
-              await deleteQiniuFile(extractKeyFromUrl(fileUrl));
-            } catch (e) {
-              console.warn("七牛删除失败", e);
-            }
-          }
           return Response.json({ ok: true });
         } catch (err) {
           const msg = err instanceof Error ? err.message : "删除失败";
