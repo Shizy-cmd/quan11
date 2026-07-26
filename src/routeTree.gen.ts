@@ -15,7 +15,6 @@ import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiQiniuTokenRouteImport } from './routes/api/qiniu-token'
 import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
 import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
@@ -51,11 +50,6 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiQiniuTokenRoute = ApiQiniuTokenRouteImport.update({
-  id: '/api/qiniu-token',
-  path: '/api/qiniu-token',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
   id: '/api/get-files',
   path: '/api/get-files',
@@ -88,7 +82,6 @@ export interface FileRoutesByFullPath {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
-  '/api/qiniu-token': typeof ApiQiniuTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -101,7 +94,6 @@ export interface FileRoutesByTo {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
-  '/api/qiniu-token': typeof ApiQiniuTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -115,7 +107,6 @@ export interface FileRoutesById {
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/get-files': typeof ApiGetFilesRoute
-  '/api/qiniu-token': typeof ApiQiniuTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -130,7 +121,6 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
-    | '/api/qiniu-token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -143,7 +133,6 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
-    | '/api/qiniu-token'
   id:
     | '__root__'
     | '/'
@@ -156,7 +145,6 @@ export interface FileRouteTypes {
     | '/api/admin-login'
     | '/api/delete-record'
     | '/api/get-files'
-    | '/api/qiniu-token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -170,7 +158,6 @@ export interface RootRouteChildren {
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiDeleteRecordRoute: typeof ApiDeleteRecordRoute
   ApiGetFilesRoute: typeof ApiGetFilesRoute
-  ApiQiniuTokenRoute: typeof ApiQiniuTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -217,13 +204,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/qiniu-token': {
-      id: '/api/qiniu-token'
-      path: '/api/qiniu-token'
-      fullPath: '/api/qiniu-token'
-      preLoaderRoute: typeof ApiQiniuTokenRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/get-files': {
       id: '/api/get-files'
       path: '/api/get-files'
@@ -266,18 +246,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiDeleteRecordRoute: ApiDeleteRecordRoute,
   ApiGetFilesRoute: ApiGetFilesRoute,
-  ApiQiniuTokenRoute: ApiQiniuTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
