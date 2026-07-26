@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import * as qiniu from "qiniu-js";
 import { toast } from "sonner";
 import {
   Search,
