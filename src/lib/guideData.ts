@@ -47,7 +47,7 @@ const COLLEGES = [
   "圣光机联合学院",
 ];
 
-export const GUIDE_SECTIONS: GuideSection[] = [
+const GUIDE_SECTION_TEMPLATE: GuideSection[] = [
   {
     id: "major-transfer",
     title: "转专业（类）",
@@ -362,3 +362,19 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     ],
   },
 ];
+
+// The guide keeps its category layout, but starts without any preset linked files.
+// Files uploaded through the admin area are loaded separately at runtime.
+export const GUIDE_SECTIONS: GuideSection[] = GUIDE_SECTION_TEMPLATE.map(
+  (section) => ({
+    ...section,
+    groups: section.groups?.map((group) => ({
+      ...group,
+      links: [],
+      subgroups: group.subgroups?.map((subgroup) => ({
+        ...subgroup,
+        links: [],
+      })),
+    })),
+  }),
+);
