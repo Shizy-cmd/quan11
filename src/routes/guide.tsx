@@ -175,6 +175,9 @@ function GuidePage() {
                 key={s.id}
                 section={s}
                 index={i + 1}
+                files={files}
+                loadingFiles={loadingFiles}
+                onChanged={refresh}
               />
             ))}
           </div>
@@ -206,9 +209,15 @@ function GuidePage() {
 function SectionBlock({
   section,
   index,
+  files,
+  loadingFiles,
+  onChanged,
 }: {
   section: GuideSection;
   index: number;
+  files: RemoteFile[];
+  loadingFiles: boolean;
+  onChanged: () => void | Promise<void>;
 }) {
   return (
     <section
@@ -240,7 +249,11 @@ function SectionBlock({
             {section.groups?.map((g) => (
               <GroupBlock
                 key={g.title}
+                sectionId={section.id}
                 group={g}
+                files={files}
+                loadingFiles={loadingFiles}
+                onChanged={onChanged}
               />
             ))}
           </div>
@@ -251,29 +264,57 @@ function SectionBlock({
 }
 
 function GroupBlock({
+  sectionId,
   group,
+  files,
+  loadingFiles,
+  onChanged,
 }: {
+  sectionId: string;
   group: GuideGroup;
+  files: RemoteFile[];
+  loadingFiles: boolean;
+  onChanged: () => void | Promise<void>;
 }) {
+  const { isAdmin } = useAuth();
+  const ch = channelKey(sectionId, group.title);
+  const uploaded = files.filter((f) => f.section === ch);
+
   return (
     <div className="rounded-2xl border border-border bg-background/60 p-5">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-foreground">{group.title}</p>
+        {isAdmin && !group.subgroups && (
+          <AdminUpload channel={ch} onDone={onChanged} />
+        )}
       </div>
 
       {group.subgroups ? (
         <div className="mt-4 space-y-4">
           {group.subgroups.map((sg) => {
+            const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
+            const sgUploaded = files.filter((f) => f.section === sgCh);
             return (
               <div key={sg.title}>
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {sg.title}
                   </p>
+                  {isAdmin && (
+                    <AdminUpload channel={sgCh} onDone={onChanged} />
+                  )}
                 </div>
                 <ul className="mt-2 space-y-1.5">
                   {sg.links.map((l, idx) => (
                     <LinkRow key={`${sg.title}-${idx}`} link={l} />
+                  ))}
+                  {sgUploaded.map((f) => (
+                    <UploadedRow
+                      key={f.id}
+                      file={f}
+                      isAdmin={isAdmin}
+                      onDone={onChanged}
+                    />
                   ))}
                 </ul>
               </div>
@@ -284,6 +325,14 @@ function GroupBlock({
         <ul className="mt-3 space-y-1.5">
           {group.links.map((l, idx) => (
             <LinkRow key={`${group.title}-${idx}`} link={l} />
+          ))}
+          {loadingFiles ? null : uploaded.map((f) => (
+            <UploadedRow
+              key={f.id}
+              file={f}
+              isAdmin={isAdmin}
+              onDone={onChanged}
+            />
           ))}
         </ul>
       )}
