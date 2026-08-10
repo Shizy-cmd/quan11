@@ -9,36 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProgressRouteImport } from './routes/progress'
-import { Route as MeRouteImport } from './routes/me'
-import { Route as GuideRouteImport } from './routes/guide'
-import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiUploadRouteImport } from './routes/api/upload'
-import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
-import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
-import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as MeRouteImport } from './routes/me'
+import { Route as ProgressRouteImport } from './routes/progress'
 import { Route as ApiAddRecordRouteImport } from './routes/api/add-record'
+import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
+import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
+import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
+import { Route as ApiUploadRouteImport } from './routes/api/upload'
 
-const ProgressRoute = ProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeRoute = MeRouteImport.update({
-  id: '/me',
-  path: '/me',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuideRoute = GuideRouteImport.update({
-  id: '/guide',
-  path: '/guide',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FeedbackRoute = FeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnnouncementsRoute = AnnouncementsRouteImport.update({
@@ -46,24 +31,29 @@ const AnnouncementsRoute = AnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiUploadRoute = ApiUploadRouteImport.update({
-  id: '/api/upload',
-  path: '/api/upload',
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
-  id: '/api/get-files',
-  path: '/api/get-files',
+const MeRoute = MeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDeleteRecordRoute = ApiDeleteRecordRouteImport.update({
-  id: '/api/delete-record',
-  path: '/api/delete-record',
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAddRecordRoute = ApiAddRecordRouteImport.update({
+  id: '/api/add-record',
+  path: '/api/add-record',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
@@ -71,9 +61,19 @@ const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
   path: '/api/admin-login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAddRecordRoute = ApiAddRecordRouteImport.update({
-  id: '/api/add-record',
-  path: '/api/add-record',
+const ApiDeleteRecordRoute = ApiDeleteRecordRouteImport.update({
+  id: '/api/delete-record',
+  path: '/api/delete-record',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
+  id: '/api/get-files',
+  path: '/api/get-files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -175,32 +175,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/progress': {
-      id: '/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof ProgressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/me': {
-      id: '/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof MeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guide': {
-      id: '/guide'
-      path: '/guide'
-      fullPath: '/guide'
-      preLoaderRoute: typeof GuideRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/feedback': {
-      id: '/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof FeedbackRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/announcements': {
@@ -210,32 +189,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/upload': {
-      id: '/api/upload'
-      path: '/api/upload'
-      fullPath: '/api/upload'
-      preLoaderRoute: typeof ApiUploadRouteImport
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/get-files': {
-      id: '/api/get-files'
-      path: '/api/get-files'
-      fullPath: '/api/get-files'
-      preLoaderRoute: typeof ApiGetFilesRouteImport
+    '/me': {
+      id: '/me'
+      path: '/me'
+      fullPath: '/me'
+      preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/delete-record': {
-      id: '/api/delete-record'
-      path: '/api/delete-record'
-      fullPath: '/api/delete-record'
-      preLoaderRoute: typeof ApiDeleteRecordRouteImport
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/add-record': {
+      id: '/api/add-record'
+      path: '/api/add-record'
+      fullPath: '/api/add-record'
+      preLoaderRoute: typeof ApiAddRecordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin-login': {
@@ -245,11 +231,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiAdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/add-record': {
-      id: '/api/add-record'
-      path: '/api/add-record'
-      fullPath: '/api/add-record'
-      preLoaderRoute: typeof ApiAddRecordRouteImport
+    '/api/delete-record': {
+      id: '/api/delete-record'
+      path: '/api/delete-record'
+      fullPath: '/api/delete-record'
+      preLoaderRoute: typeof ApiDeleteRecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/get-files': {
+      id: '/api/get-files'
+      path: '/api/get-files'
+      fullPath: '/api/get-files'
+      preLoaderRoute: typeof ApiGetFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
