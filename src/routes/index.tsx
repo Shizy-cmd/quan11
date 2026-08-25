@@ -11,7 +11,7 @@ import {
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { useContentStore } from "@/lib/store";
-import quan11 from "@/assets/quan11.jpg.asset.json";
+import quan11 from "@/assets/quan11.jpg";
 
 export const Route = createFileRoute("/")({
   component: Index,
@@ -85,7 +85,7 @@ function Index() {
               <div className="relative">
                 <div className="absolute inset-0 -z-10 scale-110 rounded-full bg-accent/60 blur-3xl" />
                 <img
-                  src={quan11.url}
+                  src={quan11}
                   alt="权十一 —— 学生权益中心 IP 形象"
                   className="w-64 rounded-[2.5rem] border border-border bg-card object-cover shadow-lg sm:w-72"
                 />

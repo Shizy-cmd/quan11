@@ -1,0 +1,27 @@
+{
+  // Cloudflare Workers 部署配置（仓库根目录）
+  // 构建产物：vite build → .output/server/index.mjs + .output/public
+  "name": "shizy-cmd-quantwo",
+  "main": ".output/server/index.mjs",
+  "compatibility_date": "2026-08-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": ".output/public"
+  },
+  "no_bundle": true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"]
+    }
+  ],
+  // 非敏感变量直接放这里；密钥类（R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY /
+  // FEISHU_APP_SECRET / ADMIN_PASSWORD）用 `wrangler secret put` 或后台 Secret 设置
+  "vars": {
+    "R2_ACCOUNT_ID": "fc8a2a45b0747d729505c1e474effb1e",
+    "R2_BUCKET_NAME": "quan11",
+    // 文件公开域名：R2 已绑定 files.quansy.xyz，quansy.xyz 留给网站
+    "R2_PUBLIC_BASE_URL": "https://files.quansy.xyz"
+  }
+}

@@ -22,7 +22,7 @@ export const Route = createFileRoute("/api/delete-record")({
               { status: 400, headers: { "content-type": "application/json" } },
             );
           }
-          // 删除飞书行；Vercel Blob 文件后续手动清理
+          // 删除飞书行；R2 对象后续手动清理
           await deleteRecord(body.id);
           return Response.json({ ok: true });
         } catch (err) {

@@ -1,5 +1,5 @@
-import hdsuLogo from "@/assets/hdsu-logo.jpg.asset.json";
-import quan11 from "@/assets/quan11.jpg.asset.json";
+import hdsuLogo from "@/assets/hdsu-logo.jpg";
+import quan11 from "@/assets/quan11.jpg";
 
 export function SiteFooter() {
   return (
@@ -8,13 +8,13 @@ export function SiteFooter() {
         <div className="grid gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3">
-              <img src={hdsuLogo.url} alt="学生会 Logo" className="h-10 w-10 rounded-xl object-cover" />
+              <img src={hdsuLogo} alt="学生会 Logo" className="h-10 w-10 rounded-xl object-cover" />
               <div>
                 <p className="text-sm font-bold text-foreground">杭州电子科技大学校学生会·学生权益中心</p>
                 <p className="text-xs text-muted-foreground">全心权益，全意为你</p>
               </div>
               <img
-                src={quan11.url}
+                src={quan11}
                 alt="权十一"
                 className="h-9 w-9 rounded-full border border-border object-cover"
               />

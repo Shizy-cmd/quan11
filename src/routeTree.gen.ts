@@ -9,36 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as AnnouncementsRouteImport } from './routes/announcements'
-import { Route as FeedbackRouteImport } from './routes/feedback'
-import { Route as GuideRouteImport } from './routes/guide'
-import { Route as MeRouteImport } from './routes/me'
 import { Route as ProgressRouteImport } from './routes/progress'
-import { Route as ApiAddRecordRouteImport } from './routes/api/add-record'
-import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
-import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
-import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
+import { Route as MeRouteImport } from './routes/me'
+import { Route as GuideRouteImport } from './routes/guide'
+import { Route as FeedbackRouteImport } from './routes/feedback'
+import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
+import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
+import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
+import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
+import { Route as ApiAddRecordRouteImport } from './routes/api/add-record'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AnnouncementsRoute = AnnouncementsRouteImport.update({
-  id: '/announcements',
-  path: '/announcements',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const FeedbackRoute = FeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GuideRoute = GuideRouteImport.update({
-  id: '/guide',
-  path: '/guide',
+const ProgressRoute = ProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MeRoute = MeRouteImport.update({
@@ -46,24 +31,29 @@ const MeRoute = MeRouteImport.update({
   path: '/me',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProgressRoute = ProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
+const GuideRoute = GuideRouteImport.update({
+  id: '/guide',
+  path: '/guide',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAddRecordRoute = ApiAddRecordRouteImport.update({
-  id: '/api/add-record',
-  path: '/api/add-record',
+const FeedbackRoute = FeedbackRouteImport.update({
+  id: '/feedback',
+  path: '/feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
-  id: '/api/admin-login',
-  path: '/api/admin-login',
+const AnnouncementsRoute = AnnouncementsRouteImport.update({
+  id: '/announcements',
+  path: '/announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiDeleteRecordRoute = ApiDeleteRecordRouteImport.update({
-  id: '/api/delete-record',
-  path: '/api/delete-record',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiUploadRoute = ApiUploadRouteImport.update({
+  id: '/api/upload',
+  path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
@@ -71,9 +61,19 @@ const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
   path: '/api/get-files',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiUploadRoute = ApiUploadRouteImport.update({
-  id: '/api/upload',
-  path: '/api/upload',
+const ApiDeleteRecordRoute = ApiDeleteRecordRouteImport.update({
+  id: '/api/delete-record',
+  path: '/api/delete-record',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
+  id: '/api/admin-login',
+  path: '/api/admin-login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAddRecordRoute = ApiAddRecordRouteImport.update({
+  id: '/api/add-record',
+  path: '/api/add-record',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -175,32 +175,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/announcements': {
-      id: '/announcements'
-      path: '/announcements'
-      fullPath: '/announcements'
-      preLoaderRoute: typeof AnnouncementsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/feedback': {
-      id: '/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof FeedbackRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/guide': {
-      id: '/guide'
-      path: '/guide'
-      fullPath: '/guide'
-      preLoaderRoute: typeof GuideRouteImport
+    '/progress': {
+      id: '/progress'
+      path: '/progress'
+      fullPath: '/progress'
+      preLoaderRoute: typeof ProgressRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/me': {
@@ -210,32 +189,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/progress': {
-      id: '/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof ProgressRouteImport
+    '/guide': {
+      id: '/guide'
+      path: '/guide'
+      fullPath: '/guide'
+      preLoaderRoute: typeof GuideRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/add-record': {
-      id: '/api/add-record'
-      path: '/api/add-record'
-      fullPath: '/api/add-record'
-      preLoaderRoute: typeof ApiAddRecordRouteImport
+    '/feedback': {
+      id: '/feedback'
+      path: '/feedback'
+      fullPath: '/feedback'
+      preLoaderRoute: typeof FeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/admin-login': {
-      id: '/api/admin-login'
-      path: '/api/admin-login'
-      fullPath: '/api/admin-login'
-      preLoaderRoute: typeof ApiAdminLoginRouteImport
+    '/announcements': {
+      id: '/announcements'
+      path: '/announcements'
+      fullPath: '/announcements'
+      preLoaderRoute: typeof AnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/delete-record': {
-      id: '/api/delete-record'
-      path: '/api/delete-record'
-      fullPath: '/api/delete-record'
-      preLoaderRoute: typeof ApiDeleteRecordRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/upload': {
+      id: '/api/upload'
+      path: '/api/upload'
+      fullPath: '/api/upload'
+      preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/get-files': {
@@ -245,11 +231,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGetFilesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/upload': {
-      id: '/api/upload'
-      path: '/api/upload'
-      fullPath: '/api/upload'
-      preLoaderRoute: typeof ApiUploadRouteImport
+    '/api/delete-record': {
+      id: '/api/delete-record'
+      path: '/api/delete-record'
+      fullPath: '/api/delete-record'
+      preLoaderRoute: typeof ApiDeleteRecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/admin-login': {
+      id: '/api/admin-login'
+      path: '/api/admin-login'
+      fullPath: '/api/admin-login'
+      preLoaderRoute: typeof ApiAdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/add-record': {
+      id: '/api/add-record'
+      path: '/api/add-record'
+      fullPath: '/api/add-record'
+      preLoaderRoute: typeof ApiAddRecordRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

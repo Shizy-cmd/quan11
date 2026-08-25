@@ -2,8 +2,8 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { ShieldCheck, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import hdsuLogo from "@/assets/hdsu-logo.jpg.asset.json";
-import quan11 from "@/assets/quan11.jpg.asset.json";
+import hdsuLogo from "@/assets/hdsu-logo.jpg";
+import quan11 from "@/assets/quan11.jpg";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,7 +52,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link to="/" className="flex items-center gap-3">
           <img
-            src={hdsuLogo.url}
+            src={hdsuLogo}
             alt="学生会 Logo"
             className="h-10 w-10 rounded-xl object-cover"
           />
@@ -61,7 +61,7 @@ export function SiteHeader() {
             <p className="text-[11px] text-muted-foreground">全心权益 · 全意为你</p>
           </div>
           <img
-            src={quan11.url}
+            src={quan11}
             alt="权十一"
             className="ml-1 hidden h-9 w-9 rounded-full border border-border object-cover sm:block"
           />

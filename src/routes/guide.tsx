@@ -360,7 +360,7 @@ function AdminUpload({
     }
     setBusy(true);
     try {
-      // 1. 上传到 Vercel Blob（经后端）
+      // 1. 上传到 Cloudflare R2（经后端）
       const fd = new FormData();
       fd.append("file", file, file.name);
       const upRes = await fetch("/api/upload", {
