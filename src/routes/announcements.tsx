@@ -33,8 +33,7 @@ export const Route = createFileRoute("/announcements")({
       { title: "权益公告 | 学生权益中心" },
       {
         name: "description",
-        content:
-          "查看学生权益中心最新公告、政策更新、月度工作动态与处理公示，让校园服务更透明。",
+        content: "查看学生权益中心最新公告、政策更新、月度工作动态与处理公示，让校园服务更透明。",
       },
       { property: "og:title", content: "权益公告 | 学生权益中心" },
       {
@@ -65,8 +64,7 @@ const EDITABLE_CATS = CATEGORIES.filter((c) => c.key !== "all");
 
 function AnnouncementsPage() {
   const { isAdmin } = useAuth();
-  const { announcements, addAnnouncement, deleteAnnouncement, togglePin } =
-    useContentStore();
+  const { announcements, addAnnouncement, deleteAnnouncement, togglePin } = useContentStore();
 
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<string>("all");
@@ -79,17 +77,11 @@ function AnnouncementsPage() {
       const okCat = active === "all" || a.category === active;
       if (!okCat) return false;
       if (!q) return true;
-      return (
-        a.title.toLowerCase().includes(q) ||
-        a.summary.toLowerCase().includes(q)
-      );
+      return a.title.toLowerCase().includes(q) || a.summary.toLowerCase().includes(q);
     });
   }, [announcements, query, active]);
 
-  const pinned = useMemo(
-    () => announcements.filter((a) => a.pinned),
-    [announcements],
-  );
+  const pinned = useMemo(() => announcements.filter((a) => a.pinned), [announcements]);
 
   const stats = useMemo(() => {
     return {
@@ -101,16 +93,14 @@ function AnnouncementsPage() {
     };
   }, [announcements]);
 
-  const openItem = openId
-    ? announcements.find((a) => a.id === openId) ?? null
-    : null;
+  const openItem = openId ? (announcements.find((a) => a.id === openId) ?? null) : null;
 
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
       {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-secondary/60 to-background">
+      <section className="relative overflow-hidden border-b border-border/70">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">
@@ -124,15 +114,12 @@ function AnnouncementsPage() {
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Megaphone className="h-5 w-5" />
               </span>
-              <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+              <h1 className="font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
                 权益公告
               </h1>
             </div>
             {isAdmin && (
-              <Button
-                onClick={() => setShowComposer(true)}
-                className="rounded-full"
-              >
+              <Button onClick={() => setShowComposer(true)} className="rounded-full font-bold">
                 <Plus className="mr-1 h-4 w-4" />
                 发布公告
               </Button>
@@ -143,7 +130,7 @@ function AnnouncementsPage() {
           </p>
 
           <form
-            className="mt-8 flex max-w-2xl items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm"
+            className="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2"
             onSubmit={(e) => e.preventDefault()}
           >
             <div className="flex flex-1 items-center gap-2 px-3">
@@ -155,7 +142,7 @@ function AnnouncementsPage() {
                 className="border-0 shadow-none focus-visible:ring-0"
               />
             </div>
-            <Button type="submit" className="rounded-xl">
+            <Button type="submit" className="rounded-full font-bold">
               搜索
             </Button>
           </form>
@@ -181,8 +168,8 @@ function AnnouncementsPage() {
                 onClick={() => setActive(c.key)}
                 className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
                   isActive
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:border-primary hover:text-primary"
+                    ? "border-foreground bg-foreground text-background"
+                    : "border-foreground/20 bg-card text-muted-foreground hover:border-foreground hover:text-foreground"
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
@@ -205,7 +192,7 @@ function AnnouncementsPage() {
               <button
                 key={a.id}
                 onClick={() => setOpenId(a.id)}
-                className="group flex h-full flex-col rounded-2xl border border-primary/30 bg-primary/[0.03] p-6 text-left transition-all hover:-translate-y-0.5 hover:shadow-md"
+                className="group flex h-full flex-col rounded-sm bg-secondary/60 p-6 text-left transition-colors hover:bg-secondary"
               >
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 font-medium text-primary">
@@ -241,9 +228,7 @@ function AnnouncementsPage() {
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-xl font-bold text-foreground">
-              {active === "all"
-                ? "全部公告"
-                : CATEGORIES.find((c) => c.key === active)?.label}
+              {active === "all" ? "全部公告" : CATEGORIES.find((c) => c.key === active)?.label}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
               共 {filtered.length} 条{query ? ` · 搜索「${query}」` : ""}
@@ -265,15 +250,11 @@ function AnnouncementsPage() {
         {filtered.length === 0 ? (
           <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-10 text-center">
             <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="mt-4 text-sm font-medium text-foreground">
-              没有找到相关公告
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              换一个关键词或分类试试。
-            </p>
+            <p className="mt-4 text-sm font-medium text-foreground">没有找到相关公告</p>
+            <p className="mt-1 text-xs text-muted-foreground">换一个关键词或分类试试。</p>
           </div>
         ) : (
-          <ul className="mt-6 divide-y divide-border rounded-2xl border border-border bg-card">
+          <ul className="mt-6 divide-y divide-border/70">
             {filtered.map((a) => (
               <li key={a.id} className="group">
                 <div className="flex items-start gap-4 px-5 py-5 transition-colors hover:bg-secondary/40 sm:px-6">
@@ -295,16 +276,12 @@ function AnnouncementsPage() {
                             置顶
                           </span>
                         )}
-                        <span className="text-muted-foreground">
-                          · {a.readingTime}
-                        </span>
+                        <span className="text-muted-foreground">· {a.readingTime}</span>
                       </div>
                       <h3 className="mt-1.5 text-base font-semibold text-foreground group-hover:text-primary">
                         {a.title}
                       </h3>
-                      <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">
-                        {a.summary}
-                      </p>
+                      <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{a.summary}</p>
                       <div className="mt-2 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="inline-flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />
@@ -324,11 +301,7 @@ function AnnouncementsPage() {
                         className="rounded-lg border border-border bg-background p-2 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                         title={a.pinned ? "取消置顶" : "置顶"}
                       >
-                        {a.pinned ? (
-                          <PinOff className="h-4 w-4" />
-                        ) : (
-                          <Pin className="h-4 w-4" />
-                        )}
+                        {a.pinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
                       </button>
                       <button
                         onClick={() => {
@@ -354,12 +327,7 @@ function AnnouncementsPage() {
       <SiteFooter />
 
       {/* Detail dialog */}
-      {openItem && (
-        <DetailDialog
-          item={openItem}
-          onClose={() => setOpenId(null)}
-        />
-      )}
+      {openItem && <DetailDialog item={openItem} onClose={() => setOpenId(null)} />}
 
       {/* Composer */}
       {showComposer && (
@@ -390,7 +358,7 @@ function StatCard({
   icon: typeof Bell;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-4">
+    <div className="rounded-sm bg-secondary/60 p-4">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Icon className="h-3.5 w-3.5 text-primary" />
         {label}
@@ -400,13 +368,7 @@ function StatCard({
   );
 }
 
-function DetailDialog({
-  item,
-  onClose,
-}: {
-  item: Announcement;
-  onClose: () => void;
-}) {
+function DetailDialog({ item, onClose }: { item: Announcement; onClose: () => void }) {
   return (
     <div
       className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm"
@@ -452,9 +414,7 @@ function ComposerDialog({
   onSubmit,
 }: {
   onClose: () => void;
-  onSubmit: (
-    payload: Omit<Announcement, "id" | "date">,
-  ) => void;
+  onSubmit: (payload: Omit<Announcement, "id" | "date">) => void;
 }) {
   const [category, setCategory] = useState("notice");
   const [title, setTitle] = useState("");
@@ -502,15 +462,11 @@ function ComposerDialog({
           <X className="h-4 w-4" />
         </button>
         <h2 className="text-xl font-bold text-foreground">发布新公告</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
-          管理员操作 · 发布后即时对所有同学可见
-        </p>
+        <p className="mt-1 text-xs text-muted-foreground">管理员操作 · 发布后即时对所有同学可见</p>
 
         <div className="mt-6 space-y-4">
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">
-              分类
-            </label>
+            <label className="mb-1.5 block text-xs font-medium text-foreground">分类</label>
             <div className="flex flex-wrap gap-2">
               {EDITABLE_CATS.map((c) => (
                 <button
@@ -529,9 +485,7 @@ function ComposerDialog({
             </div>
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">
-              标题
-            </label>
+            <label className="mb-1.5 block text-xs font-medium text-foreground">标题</label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -539,9 +493,7 @@ function ComposerDialog({
             />
           </div>
           <div>
-            <label className="mb-1.5 block text-xs font-medium text-foreground">
-              摘要
-            </label>
+            <label className="mb-1.5 block text-xs font-medium text-foreground">摘要</label>
             <Input
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
@@ -561,9 +513,7 @@ function ComposerDialog({
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">
-                阅读时长
-              </label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">阅读时长</label>
               <Input
                 value={readingTime}
                 onChange={(e) => setReadingTime(e.target.value)}

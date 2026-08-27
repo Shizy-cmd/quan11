@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { ShieldCheck, LogOut } from "lucide-react";
+import { Menu, ShieldCheck, LogOut, X } from "lucide-react";
 import { toast } from "sonner";
 import hdsuLogo from "@/assets/hdsu-logo.jpg";
-import quan11 from "@/assets/quan11.jpg";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,19 +15,17 @@ import {
 import { Input } from "@/components/ui/input";
 
 const navItems = [
-  { label: "首页", href: "/" },
-  { label: "权益公告", href: "/announcements" },
-  { label: "权益反馈", href: "/feedback" },
-  { label: "校园指南", href: "/guide" },
-  { label: "进度查询", href: "/progress" },
-  { label: "个人中心", href: "/me" },
+  { label: "首页", to: "/" },
+  { label: "权益反馈", to: "/feedback" },
+  { label: "新生答疑", to: "/qa" },
+  { label: "校园指南", to: "/guide" },
+  { label: "权益公告", to: "/announcements" },
 ];
-
-const ROUTED = new Set(["/", "/feedback", "/guide", "/progress", "/me", "/announcements"]);
 
 export function SiteHeader() {
   const { isAdmin, loginAdmin, logout } = useAuth();
   const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [pwd, setPwd] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -48,56 +45,50 @@ export function SiteHeader() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-border bg-background/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex items-center gap-3">
-          <img
-            src={hdsuLogo}
-            alt="学生会 Logo"
-            className="h-10 w-10 rounded-xl object-cover"
-          />
-          <div className="leading-tight">
-            <p className="text-sm font-bold text-foreground">学生权益中心</p>
-            <p className="text-[11px] text-muted-foreground">全心权益 · 全意为你</p>
-          </div>
-          <img
-            src={quan11}
-            alt="权十一"
-            className="ml-1 hidden h-9 w-9 rounded-full border border-border object-cover sm:block"
-          />
+        <Link to="/" className="group flex items-center gap-3">
+          <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary">
+            <img
+              src={hdsuLogo}
+              alt="学生会 Logo"
+              className="h-10 w-10 rounded-full object-cover transition-transform duration-300 group-hover:scale-110"
+            />
+          </span>
+          <span className="leading-none">
+            <span className="block text-[15px] font-black tracking-tight text-foreground">
+              学生权益中心
+            </span>
+            <span className="mt-1 block text-[10px] font-medium tracking-[0.18em] text-muted-foreground">
+              全心权益 · 全意为你
+            </span>
+          </span>
         </Link>
 
-        <div className="flex items-center gap-1">
-          <nav className="hidden items-center gap-1 md:flex">
-            {navItems.map((item) =>
-              ROUTED.has(item.href) ? (
-                <Link
-                  key={item.href}
-                  to={item.href as "/"}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  activeOptions={{ exact: true }}
-                  activeProps={{ className: "rounded-full px-4 py-2 text-sm font-medium bg-muted text-foreground" }}
-                >
-                  {item.label}
-                </Link>
-              ) : (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  {item.label}
-                </a>
-              ),
-            )}
-          </nav>
+        <nav className="hidden items-center gap-1 md:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              to={item.to}
+              className="rounded-full px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              activeOptions={{ exact: item.to === "/" }}
+              activeProps={{
+                className:
+                  "rounded-full px-4 py-2 text-sm font-semibold bg-primary text-primary-foreground",
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+        </nav>
 
-          <div className="ml-2 hidden md:block">
+        <div className="flex items-center gap-2">
+          <div className="hidden md:block">
             {isAdmin ? (
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-full"
+                className="h-9 rounded-full border-foreground/20 px-4 text-foreground"
                 onClick={() => {
                   logout();
                   toast.success("已退出管理员");
@@ -110,7 +101,7 @@ export function SiteHeader() {
               <Button
                 size="sm"
                 variant="outline"
-                className="rounded-full"
+                className="h-9 rounded-full border-foreground/20 px-4 text-foreground"
                 onClick={() => setOpen(true)}
               >
                 <ShieldCheck className="mr-1 h-3.5 w-3.5" />
@@ -118,8 +109,66 @@ export function SiteHeader() {
               </Button>
             )}
           </div>
+          <button
+            type="button"
+            aria-label="打开菜单"
+            onClick={() => setMobileOpen((v) => !v)}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-border text-foreground md:hidden"
+          >
+            {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
+          </button>
         </div>
       </div>
+
+      {mobileOpen && (
+        <div className="border-t border-border bg-background px-4 py-4 md:hidden">
+          <nav className="flex flex-col gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                to={item.to}
+                onClick={() => setMobileOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+                activeOptions={{ exact: item.to === "/" }}
+                activeProps={{
+                  className:
+                    "rounded-xl px-4 py-3 text-sm font-semibold bg-primary text-primary-foreground",
+                }}
+              >
+                {item.label}
+              </Link>
+            ))}
+            <div className="mt-2 border-t border-border pt-3">
+              {isAdmin ? (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                  onClick={() => {
+                    logout();
+                    setMobileOpen(false);
+                    toast.success("已退出管理员");
+                  }}
+                >
+                  <LogOut className="mr-1.5 h-4 w-4" />
+                  退出管理员
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="w-full rounded-xl"
+                  onClick={() => {
+                    setOpen(true);
+                    setMobileOpen(false);
+                  }}
+                >
+                  <ShieldCheck className="mr-1.5 h-4 w-4" />
+                  管理员登录
+                </Button>
+              )}
+            </div>
+          </nav>
+        </div>
+      )}
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-sm">
@@ -135,11 +184,7 @@ export function SiteHeader() {
               autoFocus
             />
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setOpen(false)}
-              >
+              <Button type="button" variant="outline" onClick={() => setOpen(false)}>
                 取消
               </Button>
               <Button type="submit" disabled={loading}>

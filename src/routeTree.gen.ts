@@ -9,8 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProgressRouteImport } from './routes/progress'
-import { Route as MeRouteImport } from './routes/me'
+import { Route as QaRouteImport } from './routes/qa'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
@@ -21,14 +20,9 @@ import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
 import { Route as ApiAddRecordRouteImport } from './routes/api/add-record'
 
-const ProgressRoute = ProgressRouteImport.update({
-  id: '/progress',
-  path: '/progress',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MeRoute = MeRouteImport.update({
-  id: '/me',
-  path: '/me',
+const QaRoute = QaRouteImport.update({
+  id: '/qa',
+  path: '/qa',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GuideRoute = GuideRouteImport.update({
@@ -82,8 +76,7 @@ export interface FileRoutesByFullPath {
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
-  '/me': typeof MeRoute
-  '/progress': typeof ProgressRoute
+  '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
@@ -95,8 +88,7 @@ export interface FileRoutesByTo {
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
-  '/me': typeof MeRoute
-  '/progress': typeof ProgressRoute
+  '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
@@ -109,8 +101,7 @@ export interface FileRoutesById {
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
-  '/me': typeof MeRoute
-  '/progress': typeof ProgressRoute
+  '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
@@ -124,8 +115,7 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/feedback'
     | '/guide'
-    | '/me'
-    | '/progress'
+    | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
     | '/api/delete-record'
@@ -137,8 +127,7 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/feedback'
     | '/guide'
-    | '/me'
-    | '/progress'
+    | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
     | '/api/delete-record'
@@ -150,8 +139,7 @@ export interface FileRouteTypes {
     | '/announcements'
     | '/feedback'
     | '/guide'
-    | '/me'
-    | '/progress'
+    | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
     | '/api/delete-record'
@@ -164,8 +152,7 @@ export interface RootRouteChildren {
   AnnouncementsRoute: typeof AnnouncementsRoute
   FeedbackRoute: typeof FeedbackRoute
   GuideRoute: typeof GuideRoute
-  MeRoute: typeof MeRoute
-  ProgressRoute: typeof ProgressRoute
+  QaRoute: typeof QaRoute
   ApiAddRecordRoute: typeof ApiAddRecordRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
   ApiDeleteRecordRoute: typeof ApiDeleteRecordRoute
@@ -175,18 +162,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/progress': {
-      id: '/progress'
-      path: '/progress'
-      fullPath: '/progress'
-      preLoaderRoute: typeof ProgressRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/me': {
-      id: '/me'
-      path: '/me'
-      fullPath: '/me'
-      preLoaderRoute: typeof MeRouteImport
+    '/qa': {
+      id: '/qa'
+      path: '/qa'
+      fullPath: '/qa'
+      preLoaderRoute: typeof QaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guide': {
@@ -260,8 +240,7 @@ const rootRouteChildren: RootRouteChildren = {
   AnnouncementsRoute: AnnouncementsRoute,
   FeedbackRoute: FeedbackRoute,
   GuideRoute: GuideRoute,
-  MeRoute: MeRoute,
-  ProgressRoute: ProgressRoute,
+  QaRoute: QaRoute,
   ApiAddRecordRoute: ApiAddRecordRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
   ApiDeleteRecordRoute: ApiDeleteRecordRoute,

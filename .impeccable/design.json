@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-27T00:00:00.000Z",
+  "title": "Design System: 学生权益中心 · 绿色编辑风官网",
+  "extensions": {
+    "colorMeta": {
+      "cream-bg": { "role": "neutral", "displayName": "Cream 奶油纸", "canonical": "oklch(0.962 0.013 118)", "tonalRamp": ["oklch(0.16 0.013 118)", "oklch(0.27 0.013 118)", "oklch(0.39 0.013 118)", "oklch(0.5 0.013 118)", "oklch(0.62 0.013 118)", "oklch(0.74 0.013 118)", "oklch(0.86 0.013 118)", "oklch(0.96 0.013 118)"] },
+      "ink": { "role": "neutral", "displayName": "Ink 墨绿黑", "canonical": "oklch(0.28 0.032 155)", "tonalRamp": ["oklch(0.14 0.032 155)", "oklch(0.24 0.032 155)", "oklch(0.34 0.032 155)", "oklch(0.44 0.032 155)", "oklch(0.54 0.032 155)", "oklch(0.64 0.032 155)", "oklch(0.74 0.032 155)", "oklch(0.84 0.032 155)"] },
+      "moss": { "role": "primary", "displayName": "Moss 苔藓绿", "canonical": "oklch(0.43 0.07 150)", "tonalRamp": ["oklch(0.15 0.07 150)", "oklch(0.25 0.07 150)", "oklch(0.35 0.07 150)", "oklch(0.43 0.07 150)", "oklch(0.53 0.07 150)", "oklch(0.63 0.07 150)", "oklch(0.73 0.07 150)", "oklch(0.83 0.07 150)"] },
+      "leaf": { "role": "secondary", "displayName": "Leaf 亮叶绿", "canonical": "oklch(0.8 0.19 145)", "tonalRamp": ["oklch(0.2 0.19 145)", "oklch(0.3 0.19 145)", "oklch(0.4 0.19 145)", "oklch(0.5 0.19 145)", "oklch(0.6 0.19 145)", "oklch(0.7 0.19 145)", "oklch(0.8 0.19 145)", "oklch(0.9 0.19 145)"] },
+      "seed-block": { "role": "neutral", "displayName": "Seed Block 浅种子块", "canonical": "oklch(0.928 0.022 128)", "tonalRamp": ["oklch(0.15 0.022 128)", "oklch(0.26 0.022 128)", "oklch(0.38 0.022 128)", "oklch(0.5 0.022 128)", "oklch(0.62 0.022 128)", "oklch(0.74 0.022 128)", "oklch(0.86 0.022 128)", "oklch(0.93 0.022 128)"] },
+      "muted-ink": { "role": "neutral", "displayName": "Muted Ink 次级墨", "canonical": "oklch(0.44 0.04 150)", "tonalRamp": ["oklch(0.15 0.04 150)", "oklch(0.24 0.04 150)", "oklch(0.33 0.04 150)", "oklch(0.44 0.04 150)", "oklch(0.54 0.04 150)", "oklch(0.64 0.04 150)", "oklch(0.74 0.04 150)", "oklch(0.84 0.04 150)"] },
+      "hairline": { "role": "neutral", "displayName": "Hairline 发丝线", "canonical": "oklch(0.868 0.022 130)", "tonalRamp": ["oklch(0.2 0.022 130)", "oklch(0.3 0.022 130)", "oklch(0.42 0.022 130)", "oklch(0.53 0.022 130)", "oklch(0.64 0.022 130)", "oklch(0.74 0.022 130)", "oklch(0.82 0.022 130)", "oklch(0.87 0.022 130)"] },
+      "card": { "role": "neutral", "displayName": "Card 卡片纸", "canonical": "oklch(0.99 0.006 112)", "tonalRamp": ["oklch(0.2 0.006 112)", "oklch(0.32 0.006 112)", "oklch(0.44 0.006 112)", "oklch(0.56 0.006 112)", "oklch(0.68 0.006 112)", "oklch(0.8 0.006 112)", "oklch(0.91 0.006 112)", "oklch(0.99 0.006 112)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display 衬线大标题", "purpose": "首屏与板块大标题，压缩字距、行高 1.06。" },
+      "body": { "displayName": "Body 正文", "purpose": "说明与列表描述，行高 1.75。" },
+      "label": { "displayName": "Label 章节眉标", "purpose": "小号大写字距 0.18em 的章节标记。" }
+    },
+    "shadows": [
+      { "name": "hover-lift", "value": "0 12px 26px -10px oklch(0.43 0.07 150)", "purpose": "主按钮与卡片 hover 的柔和浮起反馈。" }
+    ],
+    "motion": [
+      { "name": "reveal", "value": "opacity 0.8s + translateY(28px→0) cubic-bezier(0.22, 1, 0.36, 1)", "purpose": "唯一编排的滚动显现动画，每个区块进入视口上浮一次。" },
+      { "name": "chevron", "value": "rotate 300ms ease-out", "purpose": "答疑/列表展开箭头。" }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "墨绿胶囊主按钮，用于提交反馈等主行动。",
+      "html": "<button class=\"ds-btn-primary\">我要反馈</button>",
+      "css": ".ds-btn-primary { background: oklch(0.43 0.07 150); color: oklch(0.962 0.013 118); border: none; border-radius: 9999px; padding: 0.75rem 1.75rem; font-family: 'Noto Sans SC', sans-serif; font-weight: 700; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; } .ds-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 26px -10px oklch(0.43 0.07 150); } .ds-btn-primary:focus-visible { outline: 2px solid oklch(0.8 0.19 145); outline-offset: 2px; }"
+    },
+    {
+      "name": "Filter Chip",
+      "kind": "chip",
+      "refersTo": "chip-active",
+      "description": "分类筛选胶囊，激活态为墨绿底奶油字。",
+      "html": "<button class=\"ds-chip ds-chip-active\">宿舍篇</button>",
+      "css": ".ds-chip { background: oklch(0.99 0.006 112); color: oklch(0.44 0.04 150); border: 1px solid oklch(0.868 0.022 130); border-radius: 9999px; padding: 0.5rem 1rem; font-family: 'Noto Sans SC', sans-serif; font-size: 0.875rem; font-weight: 700; cursor: pointer; } .ds-chip-active { background: oklch(0.43 0.07 150); color: oklch(0.962 0.013 118); border-color: oklch(0.43 0.07 150); }"
+    },
+    {
+      "name": "Stat Block",
+      "kind": "card",
+      "refersTo": "stat-block",
+      "description": "浅种子块托底的大数字统计卡，数字用亮绿/墨绿。",
+      "html": "<div class=\"ds-stat\"><div class=\"ds-stat-num\">24</div><div class=\"ds-stat-label\">新生必看问答</div></div>",
+      "css": ".ds-stat { background: oklch(0.928 0.022 128); border-radius: 2px; padding: 1.75rem; min-height: 14rem; display: flex; flex-direction: column; justify-content: space-between; gap: 2rem; } .ds-stat-num { font-family: 'Noto Serif SC', serif; font-size: 3.75rem; font-weight: 900; line-height: 1; color: oklch(0.43 0.07 150); } .ds-stat-label { color: oklch(0.28 0.032 155); font-weight: 700; }"
+    },
+    {
+      "name": "Nav Link",
+      "kind": "nav",
+      "refersTo": "nav-link",
+      "description": "导航项，激活态为墨绿胶囊。",
+      "html": "<nav><a class=\"ds-nav ds-nav-active\" href=\"#\">首页</a><a class=\"ds-nav\" href=\"#\">权益反馈</a></nav>",
+      "css": ".ds-nav { color: oklch(0.44 0.04 150); text-decoration: none; font-family: 'Noto Sans SC', sans-serif; font-size: 0.875rem; padding: 0.5rem 1rem; border-radius: 9999px; } .ds-nav:hover { background: oklch(0.928 0.022 128); color: oklch(0.28 0.032 155); } .ds-nav-active { background: oklch(0.43 0.07 150); color: oklch(0.962 0.013 118); font-weight: 600; }"
+    },
+    {
+      "name": "Editorial Row",
+      "kind": "custom",
+      "refersTo": "editorial-row",
+      "description": "发丝线分隔的编号编辑行，hover 标题变墨绿。",
+      "html": "<a class=\"ds-row\" href=\"#\"><span class=\"ds-row-no\">01</span><span class=\"ds-row-title\">权益反馈</span></a>",
+      "css": ".ds-row { display: flex; align-items: center; gap: 2rem; padding: 2rem 0; border-top: 1px solid oklch(0.868 0.022 130 / 0.7); text-decoration: none; } .ds-row-no { font-family: 'Noto Serif SC', serif; font-size: 2.25rem; font-weight: 900; color: oklch(0.28 0.032 155 / 0.15); } .ds-row-title { font-size: 1.5rem; font-weight: 900; color: oklch(0.28 0.032 155); } .ds-row:hover .ds-row-title { color: oklch(0.43 0.07 150); }"
+    },
+    {
+      "name": "Oil Band Caption",
+      "kind": "custom",
+      "refersTo": "oil-band",
+      "description": "油画色带左下角的墨绿标注块，承载标语与来源。",
+      "html": "<div class=\"ds-oil\"><p class=\"ds-oil-title\">让优秀成为一种习惯。</p><p class=\"ds-oil-src\">梵高《绿色田野》 · 公版画作 · 后期可替换</p></div>",
+      "css": ".ds-oil { position: absolute; left: 1.25rem; bottom: 1.25rem; background: oklch(0.43 0.07 150 / 0.95); border-radius: 2px; padding: 1.25rem 1.5rem; max-width: 24rem; } .ds-oil-title { font-family: 'Noto Serif SC', serif; font-size: 1.25rem; font-weight: 900; color: oklch(0.962 0.013 118); } .ds-oil-src { font-size: 0.75rem; color: oklch(0.962 0.013 118 / 0.85); margin-top: 0.5rem; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Campus Grove",
+    "overview": "一座属于校园的绿色编辑部：奶油色的纸面、深墨绿的结构块、亮绿的点睛，以及公版油画构成的插画页。整个系统像一本装帧克制但内容扎实的校刊——大标题先行、留白充分、细线分区，不做玻璃拟态、不用渐变、不用黑色描边卡片。页面节奏是块面+细线的交替：深墨绿整屏首屏承担使命宣言，随后是奶油色的编辑式列表，统计以浅色块托底，页脚以墨绿收束。油画只出现在色带位置，并永远标注公版与可替换说明。",
+    "keyCharacteristics": ["大块纯色（墨绿/奶油）替代渐变与阴影堆叠", "公版油画作为整宽插图画带，带来源标注", "衬线大标题 + 无衬线正文的编辑排版", "细发丝线分区，无黑线圆角卡片", "单次滚动显现动画，无装饰性噪声"],
+    "rules": [
+      { "name": "The Grove Rule", "body": "深墨绿只属于结构块（首屏、页脚、按钮、激活态），亮绿只做点缀；奶油色是默认地面。任何一处大面积棕色、黑色描边或渐变都是对系统的背离。", "section": "colors" },
+      { "name": "The Provenance Rule", "body": "所有油画插画必须带公版画作·后期可替换标注，且内容未填充的条目必须明确显示待补充。", "section": "colors" },
+      { "name": "The Display-First Rule", "body": "大标题是页面第一视觉；任何区块先定标题层级，再谈装饰。", "section": "typography" }
+    ],
+    "dos": ["Do 用大块墨绿与奶油做对撞，标题居中的首屏保持简洁无按钮。", "Do 用公版油画做整宽色带，并保留来源标注。", "Do 用发丝线分隔区块，用浅种子块承载数据。", "Do 保持小字号次级文字与背景对比 ≥ 4.5:1。"],
+    "donts": ["Don't 使用任何渐变、玻璃模糊、黑色圆角边框卡片。", "Don't 使用大面积棕色或非绿色系的深色块。", "Don't 在内容缺失时编造答案——必须显示待补充。", "Don't 在首屏标题旁堆按钮或装饰条。"]
+  }
+}

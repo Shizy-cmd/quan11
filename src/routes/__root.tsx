@@ -79,18 +79,24 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "学生权益中心 | 全心权益，全意为你" },
       {
         name: "description",
-        content: "学生会学生权益中心官方服务平台：权益反馈、进度查询、校园指南、权益公告，一站完成。",
+        content:
+          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
       },
       { name: "author", content: "学生权益中心" },
       { property: "og:title", content: "学生权益中心 | 全心权益，全意为你" },
       {
         property: "og:description",
-        content: "学生会学生权益中心官方服务平台：权益反馈、进度查询、校园指南、权益公告，一站完成。",
+        content:
+          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "学生权益中心 | 全心权益，全意为你" },
-      { name: "twitter:description", content: "学生会学生权益中心官方服务平台：权益反馈、进度查询、校园指南、权益公告，一站完成。" },
+      {
+        name: "twitter:description",
+        content:
+          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
+      },
     ],
     links: [
       {
@@ -101,7 +107,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Inter:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=Ma+Shan+Zheng&display=swap",
       },
     ],
   }),
@@ -113,11 +119,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
       <head>
         <HeadContent />
       </head>
       <body>
+        <div
+          aria-hidden
+          style={{ display: "none" }}
+          dangerouslySetInnerHTML={{
+            __html:
+              "<!-- direction:hdu-rights-green | THESIS: 学生权益中心的绿色编辑风官网——墨绿大色块、奶油浅底、公版油画插图，首屏居中大字标题。 | OWN-WORLD: 奶油底 + 墨绿主色块 + 亮绿点缀；衬线大标题、细发丝线分区、无渐变、无黑框卡片。 | STORY: 访客一屏之内读懂全意为你，向下滚动依次看到服务、数据、公告与指南。 | FIRST VIEWPORT: 深墨绿全宽首屏，标题居中、无按钮；正下方整宽公版油画色带。 | FORM: 编辑式单页滚动（编号服务行 + 浅色统计块 + 细线列表），code-led（本会话无生图工具）。 | FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->",
+          }}
+        />
         {children}
         <Scripts />
       </body>

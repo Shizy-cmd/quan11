@@ -11,7 +11,6 @@ import {
   Image as ImageIcon,
   Plus,
   Trash2,
-  Upload,
   Loader2,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -98,7 +97,7 @@ function GuidePage() {
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
-      <section className="relative overflow-hidden border-b border-border bg-gradient-to-b from-secondary/60 to-background">
+      <section className="relative overflow-hidden border-b border-border/70">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">
@@ -107,14 +106,14 @@ function GuidePage() {
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-foreground">校园指南</span>
           </div>
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+          <h1 className="mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
             校园指南
           </h1>
           <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             17 个板块，覆盖政策文件、办事流程与常用平台。点击链接即可查看或下载对应 PDF。
           </p>
 
-          <div className="mt-8 flex max-w-2xl items-center gap-2 rounded-2xl border border-border bg-card p-2 shadow-sm">
+          <div className="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2">
             <div className="flex flex-1 items-center gap-2 px-3">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
@@ -125,11 +124,7 @@ function GuidePage() {
               />
             </div>
             {query && (
-              <Button
-                variant="ghost"
-                onClick={() => setQuery("")}
-                className="rounded-xl"
-              >
+              <Button variant="ghost" onClick={() => setQuery("")} className="rounded-xl">
                 清空
               </Button>
             )}
@@ -161,12 +156,8 @@ function GuidePage() {
         {sections.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
             <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="mt-4 text-sm font-medium text-foreground">
-              没有匹配的板块
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground">
-              换一个关键词试试。
-            </p>
+            <p className="mt-4 text-sm font-medium text-foreground">没有匹配的板块</p>
+            <p className="mt-1 text-xs text-muted-foreground">换一个关键词试试。</p>
           </div>
         ) : (
           <div className="space-y-10">
@@ -183,17 +174,15 @@ function GuidePage() {
           </div>
         )}
 
-        <div className="mt-14 flex flex-col items-start justify-between gap-4 rounded-2xl border border-border bg-card p-6 sm:flex-row sm:items-center">
+        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/70 pt-8 sm:flex-row sm:items-center">
           <div>
-            <p className="text-base font-semibold text-foreground">
-              没找到你需要的文件？
-            </p>
+            <p className="text-base font-semibold text-foreground">没找到你需要的文件？</p>
             <p className="mt-1 text-sm text-muted-foreground">
               提交反馈告诉我们，或联系学生权益中心补充最新文件。
             </p>
           </div>
           <Link to="/feedback">
-            <Button className="rounded-full">
+            <Button className="rounded-full font-bold">
               去提交反馈
               <ArrowRight className="ml-1 h-4 w-4" />
             </Button>
@@ -220,10 +209,7 @@ function SectionBlock({
   onChanged: () => void | Promise<void>;
 }) {
   return (
-    <section
-      id={section.id}
-      className="scroll-mt-24 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8"
-    >
+    <section id={section.id} className="scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10">
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-xs font-medium text-primary">
@@ -232,12 +218,8 @@ function SectionBlock({
             </span>
             <span className="uppercase tracking-wider">Section</span>
           </div>
-          <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">
-            {section.title}
-          </h2>
-          {section.desc && (
-            <p className="mt-1 text-sm text-muted-foreground">{section.desc}</p>
-          )}
+          <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">{section.title}</h2>
+          {section.desc && <p className="mt-1 text-sm text-muted-foreground">{section.desc}</p>}
         </div>
       </div>
 
@@ -279,42 +261,47 @@ function GroupBlock({
   const { isAdmin } = useAuth();
   const ch = channelKey(sectionId, group.title);
   const uploaded = files.filter((f) => f.section === ch);
+  const realLinks = group.links.filter((l) => l.href && l.href !== "#");
+  const visibleSubgroups = (group.subgroups ?? []).filter((sg) => {
+    const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
+    const sgUploaded = files.filter((f) => f.section === sgCh);
+    return sg.links.some((l) => l.href && l.href !== "#") || sgUploaded.length > 0;
+  });
+
+  if (
+    (group.subgroups && visibleSubgroups.length === 0) ||
+    (!group.subgroups && realLinks.length === 0 && uploaded.length === 0)
+  ) {
+    return null;
+  }
 
   return (
-    <div className="rounded-2xl border border-border bg-background/60 p-5">
+    <div className="pt-6">
       <div className="flex items-center justify-between gap-2">
         <p className="text-sm font-semibold text-foreground">{group.title}</p>
-        {isAdmin && !group.subgroups && (
-          <AdminUpload channel={ch} onDone={onChanged} />
-        )}
+        {isAdmin && !group.subgroups && <AdminUpload channel={ch} onDone={onChanged} />}
       </div>
 
       {group.subgroups ? (
         <div className="mt-4 space-y-4">
-          {group.subgroups.map((sg) => {
+          {visibleSubgroups.map((sg) => {
             const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
             const sgUploaded = files.filter((f) => f.section === sgCh);
+            const sgRealLinks = sg.links.filter((l) => l.href && l.href !== "#");
             return (
               <div key={sg.title}>
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {sg.title}
                   </p>
-                  {isAdmin && (
-                    <AdminUpload channel={sgCh} onDone={onChanged} />
-                  )}
+                  {isAdmin && <AdminUpload channel={sgCh} onDone={onChanged} />}
                 </div>
-                <ul className="mt-2 space-y-1.5">
-                  {sg.links.map((l, idx) => (
+                <ul className="mt-2 divide-y divide-border/60">
+                  {sgRealLinks.map((l, idx) => (
                     <LinkRow key={`${sg.title}-${idx}`} link={l} />
                   ))}
                   {sgUploaded.map((f) => (
-                    <UploadedRow
-                      key={f.id}
-                      file={f}
-                      isAdmin={isAdmin}
-                      onDone={onChanged}
-                    />
+                    <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
                   ))}
                 </ul>
               </div>
@@ -322,31 +309,22 @@ function GroupBlock({
           })}
         </div>
       ) : (
-        <ul className="mt-3 space-y-1.5">
-          {group.links.map((l, idx) => (
+        <ul className="mt-2 divide-y divide-border/60">
+          {realLinks.map((l, idx) => (
             <LinkRow key={`${group.title}-${idx}`} link={l} />
           ))}
-          {loadingFiles ? null : uploaded.map((f) => (
-            <UploadedRow
-              key={f.id}
-              file={f}
-              isAdmin={isAdmin}
-              onDone={onChanged}
-            />
-          ))}
+          {loadingFiles
+            ? null
+            : uploaded.map((f) => (
+                <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
+              ))}
         </ul>
       )}
     </div>
   );
 }
 
-function AdminUpload({
-  channel,
-  onDone,
-}: {
-  channel: string;
-  onDone: () => void | Promise<void>;
-}) {
+function AdminUpload({ channel, onDone }: { channel: string; onDone: () => void | Promise<void> }) {
   const { adminToken } = useAuth();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [busy, setBusy] = useState(false);
@@ -423,11 +401,7 @@ function AdminUpload({
         onClick={pick}
         disabled={busy}
       >
-        {busy ? (
-          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        ) : (
-          <Plus className="h-3.5 w-3.5" />
-        )}
+        {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
         {busy ? "上传中" : "上传"}
       </Button>
     </>
@@ -473,7 +447,7 @@ function UploadedRow({
 
   return (
     <li>
-      <div className="group flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm">
+      <div className="group flex items-center gap-2 px-1 py-2.5">
         <a
           href={file.url}
           target="_blank"
@@ -511,64 +485,25 @@ function UploadedRow({
 function MapBlock({ imageUrl }: { imageUrl?: string }) {
   if (imageUrl) {
     return (
-      <div className="overflow-hidden rounded-2xl border border-border bg-background">
-        <img
-          src={imageUrl}
-          alt="杭州电子科技大学校园地图"
-          className="w-full object-contain"
-        />
+      <div className="overflow-hidden">
+        <img src={imageUrl} alt="杭州电子科技大学校园地图" className="w-full object-contain" />
       </div>
     );
   }
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-border bg-background/60 p-10 text-center">
-      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+    <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
+      <ImageIcon className="h-7 w-7 text-muted-foreground/70" />
       <p className="text-sm font-medium text-foreground">校园地图待上传</p>
-      <p className="text-xs text-muted-foreground">
-        管理员上传地图后，将在此位置展示。
-      </p>
+      <p className="text-xs text-muted-foreground">管理员上传地图后，将在此位置展示。</p>
     </div>
   );
 }
 
 function LinkRow({ link }: { link: GuideLink }) {
   const isPlaceholder = !link.href || link.href === "#";
-  const Icon =
-    link.type === "wechat"
-      ? QrCode
-      : link.type === "link"
-        ? ExternalLink
-        : FileText;
+  const Icon = link.type === "wechat" ? QrCode : link.type === "link" ? ExternalLink : FileText;
 
-  const content = (
-    <>
-      <Icon className="h-4 w-4 shrink-0 text-primary" />
-      <span className="flex-1 text-sm text-foreground group-hover:text-primary">
-        {link.label}
-      </span>
-      <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-        {link.type === "wechat"
-          ? "公众号"
-          : link.type === "link"
-            ? "链接"
-            : "PDF"}
-      </span>
-    </>
-  );
-
-  if (isPlaceholder) {
-    return (
-      <li>
-        <div
-          className="group flex cursor-not-allowed items-center gap-2 rounded-xl border border-dashed border-border bg-background px-3 py-2 opacity-70"
-          title="文件待上传"
-        >
-          {content}
-          <span className="ml-1 text-[10px] text-muted-foreground">待上传</span>
-        </div>
-      </li>
-    );
-  }
+  if (isPlaceholder) return null;
 
   return (
     <li>
@@ -576,13 +511,16 @@ function LinkRow({ link }: { link: GuideLink }) {
         href={link.href}
         target="_blank"
         rel="noopener noreferrer"
-        className="group flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-2 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-sm"
+        className="group flex items-center gap-2 px-1 py-2.5 transition-colors"
       >
-        {content}
+        <Icon className="h-4 w-4 shrink-0 text-primary" />
+        <span className="flex-1 text-sm text-foreground group-hover:text-primary">
+          {link.label}
+        </span>
+        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          {link.type === "wechat" ? "公众号" : link.type === "link" ? "链接" : "PDF"}
+        </span>
       </a>
     </li>
   );
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const _unused = Upload; // keep import to avoid lint churn if used later

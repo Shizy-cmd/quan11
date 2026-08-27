@@ -52,8 +52,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     id: "a-canteen-2026-07",
     category: "notice",
     title: "关于开展本学期食堂满意度调研的通知",
-    summary:
-      "本次调研覆盖三个校区全部食堂档口，问卷开放至 7 月 20 日，参与即可抽取权十一周边。",
+    summary: "本次调研覆盖三个校区全部食堂档口，问卷开放至 7 月 20 日，参与即可抽取权十一周边。",
     date: "2026-07-08",
     author: "学生权益中心",
     readingTime: "2 分钟",
@@ -69,8 +68,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     id: "a-hot-water-2026-07",
     category: "policy",
     title: "宿舍楼晚间热水供应时间调整说明",
-    summary:
-      "自 7 月 10 日起，全校学生公寓晚间热水供应延长至 23:30，覆盖考试周复习需求。",
+    summary: "自 7 月 10 日起，全校学生公寓晚间热水供应延长至 23:30，覆盖考试周复习需求。",
     date: "2026-07-05",
     author: "后勤保障处 · 转发",
     readingTime: "1 分钟",
@@ -85,8 +83,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     id: "a-june-report",
     category: "work",
     title: "权益中心六月问题处理月报：共受理反馈 86 件",
-    summary:
-      "六月共受理反馈 86 件，已办结 79 件，平均处理时长 4.2 天，满意度 92%。",
+    summary: "六月共受理反馈 86 件，已办结 79 件，平均处理时长 4.2 天，满意度 92%。",
     date: "2026-07-01",
     author: "学生权益中心",
     readingTime: "3 分钟",
@@ -94,7 +91,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
       "2026 年 6 月，学生权益中心共受理各类权益反馈 86 件，其中：宿舍类 27 件、教务类 18 件、餐饮类 14 件、校园设施类 12 件、其他 15 件。",
       "已办结 79 件（91.8%），处理中 7 件；平均处理时长 4.2 天，同比上月缩短 0.8 天。",
       "回访满意度 92%，较上月提升 3 个百分点。感谢同学们的信任与耐心。",
-      "月报详细数据与典型案例已同步至「权益进度查询」——公示栏。",
+      "月报详细数据与典型案例已同步至「权益公告」——处理公示。",
     ],
   },
   {
@@ -117,8 +114,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     id: "a-case-library",
     category: "case",
     title: "处理公示：图书馆晚间关闭时间恢复至 22:30",
-    summary:
-      "经调研与协商，图书馆晚间关闭时间自 6 月 20 日起恢复至 22:30，处理时长 6 天。",
+    summary: "经调研与协商，图书馆晚间关闭时间自 6 月 20 日起恢复至 22:30，处理时长 6 天。",
     date: "2026-06-20",
     author: "学生权益中心",
     readingTime: "2 分钟",
@@ -148,8 +144,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     id: "a-survey-summer",
     category: "notice",
     title: "暑期留校学生权益需求征集开放中",
-    summary:
-      "面向暑期留校的同学开放需求征集，涵盖住宿、餐饮、图书馆、班车等六大板块。",
+    summary: "面向暑期留校的同学开放需求征集，涵盖住宿、餐饮、图书馆、班车等六大板块。",
     date: "2026-06-10",
     author: "学生权益中心",
     readingTime: "2 分钟",
@@ -170,7 +165,7 @@ const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
     content: [
       "五月受理各类反馈 71 件，宿舍与教务两类合计占比 63%。",
       "典型案例：图书馆座位预约系统升级、南门快递点动线优化、教学楼空调温度调整。",
-      "详细数据请见「权益进度查询」——公示栏 · 五月月报。",
+      "详细数据请见「权益公告」——处理公示 · 五月月报。",
     ],
   },
 ];
@@ -270,14 +265,11 @@ type ContentStoreValue = {
   deleteAnnouncement: (id: string) => void;
   togglePin: (id: string) => void;
   guides: Guide[];
-  addGuide: (
-    g: Omit<Guide, "id" | "updatedAt"> & Partial<Pick<Guide, "updatedAt">>,
-  ) => void;
+  addGuide: (g: Omit<Guide, "id" | "updatedAt"> & Partial<Pick<Guide, "updatedAt">>) => void;
   deleteGuide: (id: string) => void;
   feedbacks: Feedback[];
   addFeedback: (
-    f: Omit<Feedback, "id" | "createdAt" | "status"> &
-      Partial<Pick<Feedback, "status">>,
+    f: Omit<Feedback, "id" | "createdAt" | "status"> & Partial<Pick<Feedback, "status">>,
   ) => Feedback;
   updateFeedbackStatus: (id: string, status: Feedback["status"]) => void;
   deleteFeedback: (id: string) => void;
@@ -323,8 +315,7 @@ function generateTicketId() {
 }
 
 export function ContentStoreProvider({ children }: { children: ReactNode }) {
-  const [announcements, setAnnouncements] =
-    useState<Announcement[]>(DEFAULT_ANNOUNCEMENTS);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(DEFAULT_ANNOUNCEMENTS);
   const [guides, setGuides] = useState<Guide[]>(DEFAULT_GUIDES);
   const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
 
@@ -361,14 +352,9 @@ export function ContentStoreProvider({ children }: { children: ReactNode }) {
           } as Announcement,
           ...announcements,
         ]),
-      deleteAnnouncement: (id) =>
-        persistA(announcements.filter((x) => x.id !== id)),
+      deleteAnnouncement: (id) => persistA(announcements.filter((x) => x.id !== id)),
       togglePin: (id) =>
-        persistA(
-          announcements.map((x) =>
-            x.id === id ? { ...x, pinned: !x.pinned } : x,
-          ),
-        ),
+        persistA(announcements.map((x) => (x.id === id ? { ...x, pinned: !x.pinned } : x))),
       addGuide: (g) =>
         persistG([
           {
@@ -396,16 +382,11 @@ export function ContentStoreProvider({ children }: { children: ReactNode }) {
     [announcements, guides, feedbacks, persistA, persistG, persistF],
   );
 
-  return (
-    <ContentStoreContext.Provider value={value}>
-      {children}
-    </ContentStoreContext.Provider>
-  );
+  return <ContentStoreContext.Provider value={value}>{children}</ContentStoreContext.Provider>;
 }
 
 export function useContentStore() {
   const ctx = useContext(ContentStoreContext);
-  if (!ctx)
-    throw new Error("useContentStore must be used within <ContentStoreProvider>");
+  if (!ctx) throw new Error("useContentStore must be used within <ContentStoreProvider>");
   return ctx;
 }

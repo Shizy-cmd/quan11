@@ -20,6 +20,9 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Impeccable review artifacts
+.impeccable/review/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

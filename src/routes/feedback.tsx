@@ -79,11 +79,7 @@ function FeedbackPage() {
   const phoneOk = /^1\d{10}$/.test(contact.trim());
 
   const canSubmit = useMemo(
-    () =>
-      phoneOk &&
-      category &&
-      occurredAt &&
-      detail.trim().length >= 10,
+    () => phoneOk && category && occurredAt && detail.trim().length >= 10,
     [phoneOk, category, occurredAt, detail],
   );
 
@@ -141,14 +137,14 @@ function FeedbackPage() {
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
       <main className="flex-1">
-        <section className="border-b border-border bg-muted/40">
+        <section className="border-b border-border/70">
           <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-            <p className="text-xs font-medium tracking-widest text-primary">FEEDBACK · 权益反馈</p>
-            <h1 className="mt-3 text-3xl font-bold text-foreground sm:text-4xl">
+            <p className="text-xs font-bold tracking-[0.28em] text-primary">FEEDBACK · 权益反馈</p>
+            <h1 className="mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
               有问题，就来这里反馈
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              请如实填写以下信息。提交后系统将自动生成问题单号，你可在「进度查询」中随时查看处理进展。
+              请如实填写以下信息。提交后系统将自动生成问题单号，请妥善保存，便于工作人员与你跟进。
               带 <span className="text-destructive">*</span> 为必填项。
             </p>
           </div>
@@ -160,7 +156,7 @@ function FeedbackPage() {
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="space-y-8 rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8"
+              className="space-y-8 rounded-sm bg-secondary/60 p-6 sm:p-8"
             >
               <Field label="姓名" hint="选填，可匿名提交">
                 <Input
@@ -171,24 +167,16 @@ function FeedbackPage() {
                 />
               </Field>
 
-              <Field
-                label="联系方式"
-                required
-                hint="请输入 11 位手机号，便于工作人员回访"
-              >
+              <Field label="联系方式" required hint="请输入 11 位手机号，便于工作人员回访">
                 <Input
                   value={contact}
-                  onChange={(e) =>
-                    setContact(e.target.value.replace(/\D/g, "").slice(0, 11))
-                  }
+                  onChange={(e) => setContact(e.target.value.replace(/\D/g, "").slice(0, 11))}
                   placeholder="请输入手机号"
                   inputMode="numeric"
                   className="h-11"
                 />
                 {contact && !phoneOk && (
-                  <p className="mt-1 text-xs text-destructive">
-                    请输入正确的 11 位手机号
-                  </p>
+                  <p className="mt-1 text-xs text-destructive">请输入正确的 11 位手机号</p>
                 )}
               </Field>
 
@@ -234,7 +222,10 @@ function FeedbackPage() {
                 </p>
               </Field>
 
-              <Field label="附件" hint={`选填，支持图片 / 文档，最多 ${MAX_FILES} 个，单个不超过 10MB`}>
+              <Field
+                label="附件"
+                hint={`选填，支持图片 / 文档，最多 ${MAX_FILES} 个，单个不超过 10MB`}
+              >
                 <div
                   onClick={() => fileInputRef.current?.click()}
                   onDragOver={(e) => e.preventDefault()}
@@ -246,9 +237,7 @@ function FeedbackPage() {
                 >
                   <Upload className="h-6 w-6 text-muted-foreground" />
                   <p className="text-sm font-medium text-foreground">点击选择或拖拽文件到此处</p>
-                  <p className="text-xs text-muted-foreground">
-                    照片、截图、录音、PDF 等均可
-                  </p>
+                  <p className="text-xs text-muted-foreground">照片、截图、录音、PDF 等均可</p>
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -292,7 +281,7 @@ function FeedbackPage() {
                 <Button
                   type="submit"
                   disabled={!canSubmit || submitting}
-                  className="h-11 rounded-full px-8 text-sm font-medium"
+                  className="h-11 rounded-full px-8 text-sm font-bold"
                 >
                   {submitting ? "提交中…" : "提交反馈"}
                 </Button>
@@ -337,7 +326,7 @@ function SuccessCard({ ticket, onReset }: { ticket: string; onReset: () => void 
     toast.success("单号已复制");
   }
   return (
-    <div className="rounded-3xl border border-border bg-card p-8 text-center shadow-sm sm:p-12">
+    <div className="rounded-sm bg-secondary/60 p-8 text-center sm:p-12">
       <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-accent/15 text-accent">
         <CheckCircle2 className="h-8 w-8" />
       </div>
@@ -360,7 +349,7 @@ function SuccessCard({ ticket, onReset }: { ticket: string; onReset: () => void 
         </button>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">
-        请妥善保存单号，你可凭此在「进度查询」中查看处理进展。
+        请妥善保存问题单号，工作人员将在 2 个工作日内与你联系跟进。
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button
@@ -372,10 +361,10 @@ function SuccessCard({ ticket, onReset }: { ticket: string; onReset: () => void 
           再提交一条
         </Button>
         <a
-          href="/progress"
+          href="/"
           className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
-          前往进度查询
+          返回首页
         </a>
       </div>
     </div>
