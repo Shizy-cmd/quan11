@@ -6,9 +6,6 @@ import {
   FileText,
   ChevronRight,
   ArrowRight,
-  ExternalLink,
-  QrCode,
-  Image as ImageIcon,
   Plus,
   Trash2,
   Loader2,
@@ -17,12 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
-import {
-  GUIDE_SECTIONS,
-  type GuideLink,
-  type GuideSection,
-  type GuideGroup,
-} from "@/lib/guideData";
+import { GUIDE_SECTIONS, type GuideSection } from "@/lib/guideData";
 import { useAuth } from "@/lib/auth";
 
 export const Route = createFileRoute("/guide")({
@@ -46,30 +38,16 @@ export const Route = createFileRoute("/guide")({
 
 type RemoteFile = { id: string; name: string; section: string; url: string };
 
-/** 生成一个稳定的"频道"字符串作为板块字段值。 */
-function channelKey(sectionId: string, groupTitle: string) {
-  return `${sectionId}::${groupTitle}`;
-}
-
 /**
- * 判断一条飞书记录应归属到哪个分组。
- * 兼容两种历史格式：
- *  1) 新版：板块 = "sectionId::分组名"（如 "major-transfer::转专业（类）与大类分流实施办法"）
- *  2) 旧版 / 手动录入：板块 = 板块名（如 "转专业（类）"）或板块 id（如 "major-transfer"），此时归入该板块的第一个分组。
+ * 判断一条飞书记录是否属于某个板块。
+ * 兼容板块 id、板块名，以及旧格式 "板块id::分组名"。
  */
-function fileInGroup(fileSection: string, section: GuideSection, group: GuideGroup) {
-  const exact = channelKey(section.id, group.title);
-  if (fileSection === exact) return true;
-  if (fileSection === group.title) return true;
-  // 旧格式（板块名/id）仅兜底到"无子分组"的首分组，避免在子分组中重复出现。
-  if (
-    (fileSection === section.title || fileSection === section.id) &&
-    !group.subgroups &&
-    section.groups?.[0] === group
-  ) {
-    return true;
-  }
-  return false;
+function fileInSection(fileSection: string, section: GuideSection) {
+  return (
+    fileSection === section.id ||
+    fileSection === section.title ||
+    fileSection.startsWith(`${section.id}::`)
+  );
 }
 
 function GuidePage() {
@@ -96,22 +74,11 @@ function GuidePage() {
   const sections = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return GUIDE_SECTIONS;
-    return GUIDE_SECTIONS.filter((s) => {
-      if (s.title.toLowerCase().includes(q)) return true;
-      if (s.desc?.toLowerCase().includes(q)) return true;
-      return (
-        s.groups?.some(
-          (g) =>
-            g.title.toLowerCase().includes(q) ||
-            g.links.some((l) => l.label.toLowerCase().includes(q)) ||
-            g.subgroups?.some(
-              (sg) =>
-                sg.title.toLowerCase().includes(q) ||
-                sg.links.some((l) => l.label.toLowerCase().includes(q)),
-            ),
-        ) ?? false
-      );
-    });
+    return GUIDE_SECTIONS.filter(
+      (s) =>
+        s.title.toLowerCase().includes(q) ||
+        s.desc?.toLowerCase().includes(q),
+    );
   }, [query]);
 
   return (
@@ -140,7 +107,7 @@ function GuidePage() {
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="搜索板块、文件名，如「转专业」「国家奖学金」"
+                placeholder="搜索板块，如「转专业」「奖助学金」"
                 className="border-0 shadow-none focus-visible:ring-0"
               />
             </div>
@@ -181,7 +148,7 @@ function GuidePage() {
             <p className="mt-1 text-xs text-muted-foreground">换一个关键词试试。</p>
           </div>
         ) : (
-          <div className="space-y-10">
+          <div className="space-y-6">
             {sections.map((s, i) => (
               <SectionBlock
                 key={s.id}
@@ -229,6 +196,9 @@ function SectionBlock({
   loadingFiles: boolean;
   onChanged: () => void | Promise<void>;
 }) {
+  const { isAdmin } = useAuth();
+  const uploads = files.filter((f) => fileInSection(f.section, section));
+
   return (
     <section id={section.id} className="scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10">
       <div className="flex items-start justify-between gap-4">
@@ -242,106 +212,29 @@ function SectionBlock({
           <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">{section.title}</h2>
           {section.desc && <p className="mt-1 text-sm text-muted-foreground">{section.desc}</p>}
         </div>
+        {isAdmin && <AdminUpload channel={section.id} onDone={onChanged} />}
       </div>
 
       <div className="mt-6">
-        {section.kind === "map" ? (
-          <MapBlock imageUrl={section.imageUrl} />
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2">
-            {section.groups?.map((g) => (
-              <GroupBlock
-                key={g.title}
-                section={section}
-                group={g}
-                files={files}
-                loadingFiles={loadingFiles}
-                onChanged={onChanged}
-              />
-            ))}
+        {section.kind === "map" && section.imageUrl ? (
+          <div className="overflow-hidden">
+            <img
+              src={section.imageUrl}
+              alt="杭州电子科技大学校园地图"
+              className="w-full object-contain"
+            />
           </div>
-        )}
+        ) : null}
+
+        {!loadingFiles && uploads.length > 0 ? (
+          <ul className="mt-2 divide-y divide-border/60">
+            {uploads.map((f) => (
+              <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
+            ))}
+          </ul>
+        ) : null}
       </div>
     </section>
-  );
-}
-
-function GroupBlock({
-  section,
-  group,
-  files,
-  loadingFiles,
-  onChanged,
-}: {
-  section: GuideSection;
-  group: GuideGroup;
-  files: RemoteFile[];
-  loadingFiles: boolean;
-  onChanged: () => void | Promise<void>;
-}) {
-  const { isAdmin } = useAuth();
-  const sectionId = section.id;
-  const ch = channelKey(sectionId, group.title);
-  const uploaded = files.filter((f) => fileInGroup(f.section, section, group));
-  const hasLinks = group.links.length > 0;
-  const visibleSubgroups = (group.subgroups ?? []).filter((sg) => {
-    const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
-    const sgUploaded = files.filter((f) => f.section === sgCh);
-    return sg.links.length > 0 || sgUploaded.length > 0;
-  });
-
-  if (
-    (group.subgroups && visibleSubgroups.length === 0) ||
-    (!group.subgroups && !hasLinks && uploaded.length === 0)
-  ) {
-    return null;
-  }
-
-  return (
-    <div className="pt-6">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-sm font-semibold text-foreground">{group.title}</p>
-        {isAdmin && !group.subgroups && <AdminUpload channel={ch} onDone={onChanged} />}
-      </div>
-
-      {group.subgroups ? (
-        <div className="mt-4 space-y-4">
-          {visibleSubgroups.map((sg) => {
-            const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
-            const sgUploaded = files.filter((f) => f.section === sgCh);
-            return (
-              <div key={sg.title}>
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                    {sg.title}
-                  </p>
-                  {isAdmin && <AdminUpload channel={sgCh} onDone={onChanged} />}
-                </div>
-                <ul className="mt-2 divide-y divide-border/60">
-                  {sg.links.map((l, idx) => (
-                    <LinkRow key={`${sg.title}-${idx}`} link={l} />
-                  ))}
-                  {sgUploaded.map((f) => (
-                    <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
-                  ))}
-                </ul>
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <ul className="mt-2 divide-y divide-border/60">
-          {group.links.map((l, idx) => (
-            <LinkRow key={`${group.title}-${idx}`} link={l} />
-          ))}
-          {loadingFiles
-            ? null
-            : uploaded.map((f) => (
-                <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
-              ))}
-        </ul>
-      )}
-    </div>
   );
 }
 
@@ -499,61 +392,6 @@ function UploadedRow({
           </button>
         )}
       </div>
-    </li>
-  );
-}
-
-function MapBlock({ imageUrl }: { imageUrl?: string }) {
-  if (imageUrl) {
-    return (
-      <div className="overflow-hidden">
-        <img src={imageUrl} alt="杭州电子科技大学校园地图" className="w-full object-contain" />
-      </div>
-    );
-  }
-  return (
-    <div className="flex flex-col items-center justify-center gap-2 py-8 text-center">
-      <ImageIcon className="h-7 w-7 text-muted-foreground/70" />
-      <p className="text-sm font-medium text-foreground">校园地图待上传</p>
-      <p className="text-xs text-muted-foreground">管理员上传地图后，将在此位置展示。</p>
-    </div>
-  );
-}
-
-function LinkRow({ link }: { link: GuideLink }) {
-  const isPlaceholder = !link.href || link.href === "#";
-  const Icon = link.type === "wechat" ? QrCode : link.type === "link" ? ExternalLink : FileText;
-
-  if (isPlaceholder) {
-    return (
-      <li>
-        <div className="flex items-center gap-2 px-1 py-2.5 text-muted-foreground/70">
-          <Icon className="h-4 w-4 shrink-0" />
-          <span className="flex-1 text-sm">{link.label}</span>
-          <span className="rounded-full border border-dashed border-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
-            待上传
-          </span>
-        </div>
-      </li>
-    );
-  }
-
-  return (
-    <li>
-      <a
-        href={link.href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="group flex items-center gap-2 px-1 py-2.5 transition-colors"
-      >
-        <Icon className="h-4 w-4 shrink-0 text-primary" />
-        <span className="flex-1 text-sm text-foreground group-hover:text-primary">
-          {link.label}
-        </span>
-        <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-          {link.type === "wechat" ? "公众号" : link.type === "link" ? "链接" : "PDF"}
-        </span>
-      </a>
     </li>
   );
 }
