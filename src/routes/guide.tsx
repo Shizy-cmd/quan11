@@ -51,6 +51,27 @@ function channelKey(sectionId: string, groupTitle: string) {
   return `${sectionId}::${groupTitle}`;
 }
 
+/**
+ * 判断一条飞书记录应归属到哪个分组。
+ * 兼容两种历史格式：
+ *  1) 新版：板块 = "sectionId::分组名"（如 "major-transfer::转专业（类）与大类分流实施办法"）
+ *  2) 旧版 / 手动录入：板块 = 板块名（如 "转专业（类）"）或板块 id（如 "major-transfer"），此时归入该板块的第一个分组。
+ */
+function fileInGroup(fileSection: string, section: GuideSection, group: GuideGroup) {
+  const exact = channelKey(section.id, group.title);
+  if (fileSection === exact) return true;
+  if (fileSection === group.title) return true;
+  // 旧格式（板块名/id）仅兜底到"无子分组"的首分组，避免在子分组中重复出现。
+  if (
+    (fileSection === section.title || fileSection === section.id) &&
+    !group.subgroups &&
+    section.groups?.[0] === group
+  ) {
+    return true;
+  }
+  return false;
+}
+
 function GuidePage() {
   const [query, setQuery] = useState("");
   const [files, setFiles] = useState<RemoteFile[]>([]);
@@ -231,7 +252,7 @@ function SectionBlock({
             {section.groups?.map((g) => (
               <GroupBlock
                 key={g.title}
-                sectionId={section.id}
+                section={section}
                 group={g}
                 files={files}
                 loadingFiles={loadingFiles}
@@ -246,31 +267,32 @@ function SectionBlock({
 }
 
 function GroupBlock({
-  sectionId,
+  section,
   group,
   files,
   loadingFiles,
   onChanged,
 }: {
-  sectionId: string;
+  section: GuideSection;
   group: GuideGroup;
   files: RemoteFile[];
   loadingFiles: boolean;
   onChanged: () => void | Promise<void>;
 }) {
   const { isAdmin } = useAuth();
+  const sectionId = section.id;
   const ch = channelKey(sectionId, group.title);
-  const uploaded = files.filter((f) => f.section === ch);
-  const realLinks = group.links.filter((l) => l.href && l.href !== "#");
+  const uploaded = files.filter((f) => fileInGroup(f.section, section, group));
+  const hasLinks = group.links.length > 0;
   const visibleSubgroups = (group.subgroups ?? []).filter((sg) => {
     const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
     const sgUploaded = files.filter((f) => f.section === sgCh);
-    return sg.links.some((l) => l.href && l.href !== "#") || sgUploaded.length > 0;
+    return sg.links.length > 0 || sgUploaded.length > 0;
   });
 
   if (
     (group.subgroups && visibleSubgroups.length === 0) ||
-    (!group.subgroups && realLinks.length === 0 && uploaded.length === 0)
+    (!group.subgroups && !hasLinks && uploaded.length === 0)
   ) {
     return null;
   }
@@ -287,7 +309,6 @@ function GroupBlock({
           {visibleSubgroups.map((sg) => {
             const sgCh = channelKey(sectionId, `${group.title}/${sg.title}`);
             const sgUploaded = files.filter((f) => f.section === sgCh);
-            const sgRealLinks = sg.links.filter((l) => l.href && l.href !== "#");
             return (
               <div key={sg.title}>
                 <div className="flex items-center justify-between gap-2">
@@ -297,7 +318,7 @@ function GroupBlock({
                   {isAdmin && <AdminUpload channel={sgCh} onDone={onChanged} />}
                 </div>
                 <ul className="mt-2 divide-y divide-border/60">
-                  {sgRealLinks.map((l, idx) => (
+                  {sg.links.map((l, idx) => (
                     <LinkRow key={`${sg.title}-${idx}`} link={l} />
                   ))}
                   {sgUploaded.map((f) => (
@@ -310,7 +331,7 @@ function GroupBlock({
         </div>
       ) : (
         <ul className="mt-2 divide-y divide-border/60">
-          {realLinks.map((l, idx) => (
+          {group.links.map((l, idx) => (
             <LinkRow key={`${group.title}-${idx}`} link={l} />
           ))}
           {loadingFiles
@@ -503,7 +524,19 @@ function LinkRow({ link }: { link: GuideLink }) {
   const isPlaceholder = !link.href || link.href === "#";
   const Icon = link.type === "wechat" ? QrCode : link.type === "link" ? ExternalLink : FileText;
 
-  if (isPlaceholder) return null;
+  if (isPlaceholder) {
+    return (
+      <li>
+        <div className="flex items-center gap-2 px-1 py-2.5 text-muted-foreground/70">
+          <Icon className="h-4 w-4 shrink-0" />
+          <span className="flex-1 text-sm">{link.label}</span>
+          <span className="rounded-full border border-dashed border-border px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground/60">
+            待上传
+          </span>
+        </div>
+      </li>
+    );
+  }
 
   return (
     <li>
