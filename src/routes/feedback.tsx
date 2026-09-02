@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { useContentStore } from "@/lib/store";
+import { FEEDBACK_CATEGORIES } from "@/lib/feedbackData";
 
 export const Route = createFileRoute("/feedback")({
   head: () => ({
@@ -35,16 +35,6 @@ export const Route = createFileRoute("/feedback")({
   }),
   component: FeedbackPage,
 });
-
-const CATEGORIES = [
-  { value: "dorm", label: "学生公寓" },
-  { value: "teaching", label: "教学楼" },
-  { value: "canteen", label: "食堂" },
-  { value: "market", label: "教育超市" },
-  { value: "campus", label: "校园环境" },
-  { value: "library", label: "图书馆" },
-  { value: "other", label: "其他" },
-];
 
 const MAX_FILES = 5;
 const MAX_SIZE = 10 * 1024 * 1024;
@@ -65,7 +55,6 @@ function defaultOccurredAt() {
 }
 
 function FeedbackPage() {
-  const store = useContentStore();
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [category, setCategory] = useState<string>("");
@@ -110,16 +99,31 @@ function FeedbackPage() {
     e.preventDefault();
     if (!canSubmit || submitting) return;
     setSubmitting(true);
-    await new Promise((r) => setTimeout(r, 400));
-    const record = store.addFeedback({
-      name: name.trim() || undefined,
-      contact: contact.trim(),
-      category,
-      occurredAt,
-      detail: detail.trim(),
-      attachments: files.map((f) => ({ name: f.name, size: f.size })),
-    });
-    setTicket(record.id);
+    try {
+      const fd = new FormData();
+      fd.append("name", name.trim());
+      fd.append("contact", contact.trim());
+      fd.append("category", category);
+      fd.append("occurredAt", occurredAt);
+      fd.append("detail", detail.trim());
+      for (const f of files) fd.append("files", f, f.name);
+
+      const res = await fetch("/api/submit-feedback", {
+        method: "POST",
+        body: fd,
+      });
+      const json = (await res.json()) as {
+        ok: boolean;
+        id?: string;
+        error?: string;
+      };
+      if (!json.ok || !json.id) {
+        throw new Error(json.error ?? "提交失败");
+      }
+      setTicket(json.id);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "提交失败");
+    }
     setSubmitting(false);
   }
 
@@ -186,7 +190,7 @@ function FeedbackPage() {
                     <SelectValue placeholder="请选择问题类型" />
                   </SelectTrigger>
                   <SelectContent>
-                    {CATEGORIES.map((c) => (
+                    {FEEDBACK_CATEGORIES.map((c) => (
                       <SelectItem key={c.value} value={c.value}>
                         {c.label}
                       </SelectItem>

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Menu, ShieldCheck, LogOut, X } from "lucide-react";
+import { Menu, ShieldCheck, LogOut, X, ClipboardList } from "lucide-react";
 import { toast } from "sonner";
 import hdsuLogo from "@/assets/hdsu-logo.jpg";
 import { useAuth } from "@/lib/auth";
@@ -85,18 +85,27 @@ export function SiteHeader() {
         <div className="flex items-center gap-2">
           <div className="hidden md:block">
             {isAdmin ? (
-              <Button
-                size="sm"
-                variant="outline"
-                className="h-9 rounded-full border-foreground/20 px-4 text-foreground"
-                onClick={() => {
-                  logout();
-                  toast.success("已退出管理员");
-                }}
-              >
-                <LogOut className="mr-1 h-3.5 w-3.5" />
-                退出管理员
-              </Button>
+              <div className="flex items-center gap-1">
+                <Link
+                  to="/admin-feedback"
+                  className="mr-1 inline-flex h-9 items-center gap-1.5 rounded-full border border-primary/30 px-4 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+                >
+                  <ClipboardList className="h-3.5 w-3.5" />
+                  反馈管理
+                </Link>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-9 rounded-full border-foreground/20 px-4 text-foreground"
+                  onClick={() => {
+                    logout();
+                    toast.success("已退出管理员");
+                  }}
+                >
+                  <LogOut className="mr-1 h-3.5 w-3.5" />
+                  退出管理员
+                </Button>
+              </div>
             ) : (
               <Button
                 size="sm"
@@ -138,6 +147,15 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
+            {isAdmin && (
+              <Link
+                to="/admin-feedback"
+                onClick={() => setMobileOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-medium text-foreground transition-colors hover:bg-muted"
+              >
+                反馈管理
+              </Link>
+            )}
             <div className="mt-2 border-t border-border pt-3">
               {isAdmin ? (
                 <Button

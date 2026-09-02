@@ -36,13 +36,13 @@ export async function getTenantAccessToken(): Promise<string> {
   return cachedToken.token;
 }
 
-function tableEndpoint(path: string) {
-  const appToken = process.env.FEISHU_APP_TOKEN;
-  const tableId = process.env.FEISHU_TABLE_ID;
-  if (!appToken || !tableId) {
+function tableEndpoint(path: string, appToken?: string, tableId?: string) {
+  const app = appToken ?? process.env.FEISHU_APP_TOKEN;
+  const tid = tableId ?? process.env.FEISHU_TABLE_ID;
+  if (!app || !tid) {
     throw new Error("FEISHU_APP_TOKEN / FEISHU_TABLE_ID 未配置");
   }
-  return `${FEISHU_BASE}/bitable/v1/apps/${appToken}/tables/${tableId}${path}`;
+  return `${FEISHU_BASE}/bitable/v1/apps/${app}/tables/${tid}${path}`;
 }
 
 export type FeishuRecord = {
@@ -50,12 +50,15 @@ export type FeishuRecord = {
   fields: Record<string, unknown>;
 };
 
-export async function listRecords(): Promise<FeishuRecord[]> {
+export async function listRecords(
+  tableId?: string,
+  appToken?: string,
+): Promise<FeishuRecord[]> {
   const token = await getTenantAccessToken();
   const all: FeishuRecord[] = [];
   let pageToken: string | undefined;
   do {
-    const url = new URL(tableEndpoint("/records"));
+    const url = new URL(tableEndpoint("/records", appToken, tableId));
     url.searchParams.set("page_size", "500");
     if (pageToken) url.searchParams.set("page_token", pageToken);
     const res = await fetch(url.toString(), {
@@ -77,9 +80,13 @@ export async function listRecords(): Promise<FeishuRecord[]> {
   return all;
 }
 
-export async function createRecord(fields: Record<string, unknown>): Promise<string> {
+export async function createRecord(
+  fields: Record<string, unknown>,
+  tableId?: string,
+  appToken?: string,
+): Promise<string> {
   const token = await getTenantAccessToken();
-  const res = await fetch(tableEndpoint("/records"), {
+  const res = await fetch(tableEndpoint("/records", appToken, tableId), {
     method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
@@ -98,9 +105,32 @@ export async function createRecord(fields: Record<string, unknown>): Promise<str
   return json.data.record.record_id;
 }
 
-export async function deleteRecord(recordId: string): Promise<void> {
+export async function updateRecord(
+  recordId: string,
+  fields: Record<string, unknown>,
+  tableId?: string,
+  appToken?: string,
+): Promise<void> {
   const token = await getTenantAccessToken();
-  const res = await fetch(tableEndpoint(`/records/${recordId}`), {
+  const res = await fetch(tableEndpoint(`/records/${recordId}`, appToken, tableId), {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ fields }),
+  });
+  const json = (await res.json()) as { code: number; msg: string };
+  if (json.code !== 0) throw new Error(`飞书更新失败: ${json.msg}`);
+}
+
+export async function deleteRecord(
+  recordId: string,
+  tableId?: string,
+  appToken?: string,
+): Promise<void> {
+  const token = await getTenantAccessToken();
+  const res = await fetch(tableEndpoint(`/records/${recordId}`, appToken, tableId), {
     method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -108,9 +138,13 @@ export async function deleteRecord(recordId: string): Promise<void> {
   if (json.code !== 0) throw new Error(`飞书删除失败: ${json.msg}`);
 }
 
-export async function getRecord(recordId: string): Promise<FeishuRecord | null> {
+export async function getRecord(
+  recordId: string,
+  tableId?: string,
+  appToken?: string,
+): Promise<FeishuRecord | null> {
   const token = await getTenantAccessToken();
-  const res = await fetch(tableEndpoint(`/records/${recordId}`), {
+  const res = await fetch(tableEndpoint(`/records/${recordId}`, appToken, tableId), {
     headers: { Authorization: `Bearer ${token}` },
   });
   const json = (await res.json()) as {

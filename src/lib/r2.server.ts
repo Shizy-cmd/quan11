@@ -134,3 +134,174 @@ export async function uploadToR2(params: {
   const publicBase = process.env.R2_PUBLIC_BASE_URL?.replace(/\/+$/, "");
   return publicBase ? `${publicBase}/${params.key}` : url;
 }
+
+/**
+ * 删除 R2 中的单个对象（S3 DELETE）。404 视为已删除，不报错。
+ */
+export async function deleteFromR2(key: string): Promise<void> {
+  const accountId = requireEnv("R2_ACCOUNT_ID");
+  const accessKeyId = requireEnv("R2_ACCESS_KEY_ID");
+  const secretAccessKey = requireEnv("R2_SECRET_ACCESS_KEY");
+  const bucket = requireEnv("R2_BUCKET_NAME");
+
+  const payloadHash = await sha256Hex("");
+  const host = `${accountId}.r2.cloudflarestorage.com`;
+  const path = `/${bucket}/${key}`;
+  const url = `https://${host}${path}`;
+
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const region = "auto";
+
+  const headers: Record<string, string> = {
+    host,
+    "x-amz-content-sha256": payloadHash,
+    "x-amz-date": amzDate,
+  };
+  const signedHeaderNames = Object.keys(headers).sort();
+  const canonicalHeaders =
+    signedHeaderNames.map((name) => `${name}:${headers[name]}`).join("\n") +
+    "\n";
+  const signedHeaders = signedHeaderNames.join(";");
+
+  const canonicalRequest = [
+    "DELETE",
+    path,
+    "",
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+
+  const scope = `${dateStamp}/${region}/s3/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    scope,
+    await sha256Hex(canonicalRequest),
+  ].join("\n");
+  const kDate = await hmac(encoder.encode(`AWS4${secretAccessKey}`), dateStamp);
+  const kRegion = await hmac(kDate, region);
+  const kService = await hmac(kRegion, "s3");
+  const kSigning = await hmac(kService, "aws4_request");
+  const signature = toHex(await hmac(kSigning, stringToSign));
+  const authorization =
+    `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${scope}, ` +
+    `SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const response = await fetch(url, {
+    method: "DELETE",
+    headers: { ...headers, authorization },
+  });
+  if (!response.ok && response.status !== 404) {
+    const detail = (await response.text()).slice(0, 300);
+    throw new Error(`R2 删除失败（${response.status}）: ${detail}`);
+  }
+}
+
+/**
+ * 列出 R2 桶内全部对象 key（S3 ListObjectsV2，自动翻页）。
+ */
+export async function listR2Keys(): Promise<string[]> {
+  const accountId = requireEnv("R2_ACCOUNT_ID");
+  const accessKeyId = requireEnv("R2_ACCESS_KEY_ID");
+  const secretAccessKey = requireEnv("R2_SECRET_ACCESS_KEY");
+  const bucket = requireEnv("R2_BUCKET_NAME");
+  const host = `${accountId}.r2.cloudflarestorage.com`;
+  const path = `/${bucket}`;
+  const region = "auto";
+
+  const keys: string[] = [];
+  let continuationToken: string | undefined;
+
+  while (true) {
+    const params: { name: string; value: string }[] = [
+      { name: "list-type", value: "2" },
+      { name: "max-keys", value: "1000" },
+    ];
+    if (continuationToken) {
+      params.push({ name: "continuation-token", value: continuationToken });
+    }
+    params.sort((a, b) => a.name.localeCompare(b.name));
+    const canonicalQuery = params
+      .map((p) => `${p.name}=${encodeURIComponent(p.value)}`)
+      .join("&");
+    const url = `https://${host}${path}?${canonicalQuery}`;
+
+    const now = new Date();
+    const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+    const dateStamp = amzDate.slice(0, 8);
+    const payloadHash = await sha256Hex("");
+
+    const headers: Record<string, string> = {
+      host,
+      "x-amz-content-sha256": payloadHash,
+      "x-amz-date": amzDate,
+    };
+    const signedHeaderNames = Object.keys(headers).sort();
+    const canonicalHeaders =
+      signedHeaderNames.map((name) => `${name}:${headers[name]}`).join("\n") +
+      "\n";
+    const signedHeaders = signedHeaderNames.join(";");
+
+    const canonicalRequest = [
+      "GET",
+      path,
+      canonicalQuery,
+      canonicalHeaders,
+      signedHeaders,
+      payloadHash,
+    ].join("\n");
+
+    const scope = `${dateStamp}/${region}/s3/aws4_request`;
+    const stringToSign = [
+      "AWS4-HMAC-SHA256",
+      amzDate,
+      scope,
+      await sha256Hex(canonicalRequest),
+    ].join("\n");
+    const kDate = await hmac(encoder.encode(`AWS4${secretAccessKey}`), dateStamp);
+    const kRegion = await hmac(kDate, region);
+    const kService = await hmac(kRegion, "s3");
+    const kSigning = await hmac(kService, "aws4_request");
+    const signature = toHex(await hmac(kSigning, stringToSign));
+    const authorization =
+      `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${scope}, ` +
+      `SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+    const response = await fetch(url, {
+      method: "GET",
+      headers: { ...headers, authorization },
+    });
+    if (!response.ok) {
+      const detail = (await response.text()).slice(0, 300);
+      throw new Error(`R2 列出失败（${response.status}）: ${detail}`);
+    }
+    const xml = await response.text();
+    const keyRegex = /<Key>([^<]+)<\/Key>/g;
+    let m: RegExpExecArray | null;
+    while ((m = keyRegex.exec(xml))) keys.push(unescapeXml(m[1]));
+
+    const truncated = /<IsTruncated>true<\/IsTruncated>/.test(xml);
+    if (!truncated) break;
+    const tokenMatch = xml.match(/<NextContinuationToken>([^<]+)<\/NextContinuationToken>/);
+    if (!tokenMatch) break;
+    continuationToken = unescapeXml(tokenMatch[1]);
+  }
+
+  return keys;
+}
+
+function unescapeXml(s: string): string {
+  return s.replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
+}
+
+/**
+ * 从公开 URL（或 S3 端点 URL）中解析出 R2 对象 key。
+ * 仅匹配 guides/ 与 feedback/ 前缀；其它 URL 返回 null。
+ */
+export function publicUrlToKey(url: string): string | null {
+  const m = url.match(/\/((?:guides|feedback)\/.*)$/);
+  return m ? m[1] : null;
+}

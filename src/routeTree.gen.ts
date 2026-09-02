@@ -13,10 +13,16 @@ import { Route as QaRouteImport } from './routes/qa'
 import { Route as GuideRouteImport } from './routes/guide'
 import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
+import { Route as AdminFeedbackRouteImport } from './routes/admin-feedback'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
+import { Route as ApiUpdateFeedbackRouteImport } from './routes/api/update-feedback'
+import { Route as ApiSubmitFeedbackRouteImport } from './routes/api/submit-feedback'
+import { Route as ApiR2CleanupRouteImport } from './routes/api/r2-cleanup'
 import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
+import { Route as ApiFeedbackListRouteImport } from './routes/api/feedback-list'
 import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
+import { Route as ApiDeleteFeedbackRouteImport } from './routes/api/delete-feedback'
 import { Route as ApiAdminLoginRouteImport } from './routes/api/admin-login'
 import { Route as ApiAddRecordRouteImport } from './routes/api/add-record'
 
@@ -40,6 +46,11 @@ const AnnouncementsRoute = AnnouncementsRouteImport.update({
   path: '/announcements',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminFeedbackRoute = AdminFeedbackRouteImport.update({
+  id: '/admin-feedback',
+  path: '/admin-feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -50,14 +61,39 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
   path: '/api/upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiUpdateFeedbackRoute = ApiUpdateFeedbackRouteImport.update({
+  id: '/api/update-feedback',
+  path: '/api/update-feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiSubmitFeedbackRoute = ApiSubmitFeedbackRouteImport.update({
+  id: '/api/submit-feedback',
+  path: '/api/submit-feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiR2CleanupRoute = ApiR2CleanupRouteImport.update({
+  id: '/api/r2-cleanup',
+  path: '/api/r2-cleanup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
   id: '/api/get-files',
   path: '/api/get-files',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiFeedbackListRoute = ApiFeedbackListRouteImport.update({
+  id: '/api/feedback-list',
+  path: '/api/feedback-list',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDeleteRecordRoute = ApiDeleteRecordRouteImport.update({
   id: '/api/delete-record',
   path: '/api/delete-record',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiDeleteFeedbackRoute = ApiDeleteFeedbackRouteImport.update({
+  id: '/api/delete-feedback',
+  path: '/api/delete-feedback',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAdminLoginRoute = ApiAdminLoginRouteImport.update({
@@ -73,90 +109,132 @@ const ApiAddRecordRoute = ApiAddRecordRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin-feedback': typeof AdminFeedbackRoute
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
   '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
+  '/api/delete-feedback': typeof ApiDeleteFeedbackRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
+  '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/r2-cleanup': typeof ApiR2CleanupRoute
+  '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
+  '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin-feedback': typeof AdminFeedbackRoute
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
   '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
+  '/api/delete-feedback': typeof ApiDeleteFeedbackRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
+  '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/r2-cleanup': typeof ApiR2CleanupRoute
+  '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
+  '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin-feedback': typeof AdminFeedbackRoute
   '/announcements': typeof AnnouncementsRoute
   '/feedback': typeof FeedbackRoute
   '/guide': typeof GuideRoute
   '/qa': typeof QaRoute
   '/api/add-record': typeof ApiAddRecordRoute
   '/api/admin-login': typeof ApiAdminLoginRoute
+  '/api/delete-feedback': typeof ApiDeleteFeedbackRoute
   '/api/delete-record': typeof ApiDeleteRecordRoute
+  '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/r2-cleanup': typeof ApiR2CleanupRoute
+  '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
+  '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin-feedback'
     | '/announcements'
     | '/feedback'
     | '/guide'
     | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
+    | '/api/delete-feedback'
     | '/api/delete-record'
+    | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/r2-cleanup'
+    | '/api/submit-feedback'
+    | '/api/update-feedback'
     | '/api/upload'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin-feedback'
     | '/announcements'
     | '/feedback'
     | '/guide'
     | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
+    | '/api/delete-feedback'
     | '/api/delete-record'
+    | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/r2-cleanup'
+    | '/api/submit-feedback'
+    | '/api/update-feedback'
     | '/api/upload'
   id:
     | '__root__'
     | '/'
+    | '/admin-feedback'
     | '/announcements'
     | '/feedback'
     | '/guide'
     | '/qa'
     | '/api/add-record'
     | '/api/admin-login'
+    | '/api/delete-feedback'
     | '/api/delete-record'
+    | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/r2-cleanup'
+    | '/api/submit-feedback'
+    | '/api/update-feedback'
     | '/api/upload'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminFeedbackRoute: typeof AdminFeedbackRoute
   AnnouncementsRoute: typeof AnnouncementsRoute
   FeedbackRoute: typeof FeedbackRoute
   GuideRoute: typeof GuideRoute
   QaRoute: typeof QaRoute
   ApiAddRecordRoute: typeof ApiAddRecordRoute
   ApiAdminLoginRoute: typeof ApiAdminLoginRoute
+  ApiDeleteFeedbackRoute: typeof ApiDeleteFeedbackRoute
   ApiDeleteRecordRoute: typeof ApiDeleteRecordRoute
+  ApiFeedbackListRoute: typeof ApiFeedbackListRoute
   ApiGetFilesRoute: typeof ApiGetFilesRoute
+  ApiR2CleanupRoute: typeof ApiR2CleanupRoute
+  ApiSubmitFeedbackRoute: typeof ApiSubmitFeedbackRoute
+  ApiUpdateFeedbackRoute: typeof ApiUpdateFeedbackRoute
   ApiUploadRoute: typeof ApiUploadRoute
 }
 
@@ -190,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnnouncementsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin-feedback': {
+      id: '/admin-feedback'
+      path: '/admin-feedback'
+      fullPath: '/admin-feedback'
+      preLoaderRoute: typeof AdminFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -204,6 +289,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/update-feedback': {
+      id: '/api/update-feedback'
+      path: '/api/update-feedback'
+      fullPath: '/api/update-feedback'
+      preLoaderRoute: typeof ApiUpdateFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/submit-feedback': {
+      id: '/api/submit-feedback'
+      path: '/api/submit-feedback'
+      fullPath: '/api/submit-feedback'
+      preLoaderRoute: typeof ApiSubmitFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/r2-cleanup': {
+      id: '/api/r2-cleanup'
+      path: '/api/r2-cleanup'
+      fullPath: '/api/r2-cleanup'
+      preLoaderRoute: typeof ApiR2CleanupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/get-files': {
       id: '/api/get-files'
       path: '/api/get-files'
@@ -211,11 +317,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiGetFilesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/feedback-list': {
+      id: '/api/feedback-list'
+      path: '/api/feedback-list'
+      fullPath: '/api/feedback-list'
+      preLoaderRoute: typeof ApiFeedbackListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/delete-record': {
       id: '/api/delete-record'
       path: '/api/delete-record'
       fullPath: '/api/delete-record'
       preLoaderRoute: typeof ApiDeleteRecordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/delete-feedback': {
+      id: '/api/delete-feedback'
+      path: '/api/delete-feedback'
+      fullPath: '/api/delete-feedback'
+      preLoaderRoute: typeof ApiDeleteFeedbackRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/admin-login': {
@@ -237,14 +357,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminFeedbackRoute: AdminFeedbackRoute,
   AnnouncementsRoute: AnnouncementsRoute,
   FeedbackRoute: FeedbackRoute,
   GuideRoute: GuideRoute,
   QaRoute: QaRoute,
   ApiAddRecordRoute: ApiAddRecordRoute,
   ApiAdminLoginRoute: ApiAdminLoginRoute,
+  ApiDeleteFeedbackRoute: ApiDeleteFeedbackRoute,
   ApiDeleteRecordRoute: ApiDeleteRecordRoute,
+  ApiFeedbackListRoute: ApiFeedbackListRoute,
   ApiGetFilesRoute: ApiGetFilesRoute,
+  ApiR2CleanupRoute: ApiR2CleanupRoute,
+  ApiSubmitFeedbackRoute: ApiSubmitFeedbackRoute,
+  ApiUpdateFeedbackRoute: ApiUpdateFeedbackRoute,
   ApiUploadRoute: ApiUploadRoute,
 }
 export const routeTree = rootRouteImport

@@ -18,6 +18,7 @@
   ],
   // 非敏感变量直接放这里；密钥类（R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY /
   // FEISHU_APP_SECRET / ADMIN_PASSWORD）用 `wrangler secret put` 或后台 Secret 设置
+  // FEISHU_FEEDBACK_TABLE_ID 与 FEISHU_TABLE_ID 同类，均需在部署时以 secret/vars 提供
   "vars": {
     "R2_ACCOUNT_ID": "fc8a2a45b0747d729505c1e474effb1e",
     "R2_BUCKET_NAME": "quan11",
