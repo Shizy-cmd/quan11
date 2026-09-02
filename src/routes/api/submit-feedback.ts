@@ -43,6 +43,7 @@ export const Route = createFileRoute("/api/submit-feedback")({
 
           const form = await request.formData();
           const name = String(form.get("name") ?? "").trim();
+          const campus = String(form.get("campus") ?? "").trim();
           const contact = String(form.get("contact") ?? "").trim();
           const category = String(form.get("category") ?? "").trim();
           const occurredAtRaw = String(form.get("occurredAt") ?? "").trim();
@@ -50,6 +51,12 @@ export const Route = createFileRoute("/api/submit-feedback")({
 
           if (!/^1\d{10}$/.test(contact)) {
             return json(400, { ok: false, error: "请输入正确的 11 位手机号" });
+          }
+          if (!campus) {
+            return json(400, { ok: false, error: "请填写校区" });
+          }
+          if (campus.length > 30) {
+            return json(400, { ok: false, error: "校区名称过长" });
           }
           if (!isFeedbackCategory(category)) {
             return json(400, { ok: false, error: "请选择有效的问题类型" });
@@ -95,6 +102,7 @@ export const Route = createFileRoute("/api/submit-feedback")({
 
           const id = await createFeedbackRecord({
             name: name || undefined,
+            campus,
             contact,
             category: category as FeedbackCategory,
             occurredAt,

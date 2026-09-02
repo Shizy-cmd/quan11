@@ -92,6 +92,7 @@ function toText(ms: number): string {
 
 export type FeedbackCreateInput = {
   name?: string;
+  campus: string;
   contact: string;
   category: FeedbackCategory;
   occurredAt: number;
@@ -106,6 +107,7 @@ export async function createFeedbackRecord(
   const ticket = generateTicketId();
   const fields: Record<string, unknown> = {
     单号: ticket,
+    校区: input.campus,
     联系方式: input.contact,
     问题类型: categoryLabel(input.category),
     发生时间: input.occurredAt,
@@ -133,6 +135,7 @@ export async function listFeedbackRecords(): Promise<FeedbackView[]> {
     const created = typeof f["提交时间"] === "number" ? f["提交时间"] : 0;
     const attachments = readLinks(f["附件"]);
     const contact = readText(f["联系方式"]);
+    const campusStr = readText(f["校区"]);
     return {
       id: r.record_id,
       ticket: readText(f["单号"]) || r.record_id,
@@ -140,6 +143,7 @@ export async function listFeedbackRecords(): Promise<FeedbackView[]> {
       contact,
       category: categoryValue(catLabel) as FeedbackCategory,
       categoryLabel: catLabel,
+      campus: campusStr,
       occurredAt: occurred,
       occurredAtText: occurred ? toText(occurred) : "",
       detail: readText(f["问题描述"]) || readText(f["detail"]),

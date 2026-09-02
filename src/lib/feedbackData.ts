@@ -27,6 +27,7 @@ export type FeedbackView = {
   contact: string;
   category: FeedbackCategory;
   categoryLabel: string;
+  campus: string;
   occurredAt: number;
   occurredAtText: string;
   detail: string;

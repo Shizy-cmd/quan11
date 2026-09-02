@@ -410,6 +410,10 @@ function FeedbackRow({
               <span className="text-muted-foreground">姓名：</span>
               <span className="text-foreground">{maskName(item.name)}</span>
             </div>
+            <div className="text-sm">
+              <span className="text-muted-foreground">校区：</span>
+              <span className="text-foreground">{item.campus || "—"}</span>
+            </div>
             <div className="rounded-sm bg-muted/50 p-3 text-sm leading-relaxed text-foreground">
               {item.detail || "（无描述）"}
             </div>

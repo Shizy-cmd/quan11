@@ -56,6 +56,7 @@ function defaultOccurredAt() {
 
 function FeedbackPage() {
   const [name, setName] = useState("");
+  const [campus, setCampus] = useState<string>("");
   const [contact, setContact] = useState("");
   const [category, setCategory] = useState<string>("");
   const [occurredAt, setOccurredAt] = useState<string>(defaultOccurredAt());
@@ -68,8 +69,8 @@ function FeedbackPage() {
   const phoneOk = /^1\d{10}$/.test(contact.trim());
 
   const canSubmit = useMemo(
-    () => phoneOk && category && occurredAt && detail.trim().length >= 10,
-    [phoneOk, category, occurredAt, detail],
+    () => phoneOk && campus && category && occurredAt && detail.trim().length >= 10,
+    [phoneOk, campus, category, occurredAt, detail],
   );
 
   function handleFiles(list: FileList | null) {
@@ -102,6 +103,7 @@ function FeedbackPage() {
     try {
       const fd = new FormData();
       fd.append("name", name.trim());
+      fd.append("campus", campus);
       fd.append("contact", contact.trim());
       fd.append("category", category);
       fd.append("occurredAt", occurredAt);
@@ -129,6 +131,7 @@ function FeedbackPage() {
 
   function resetForm() {
     setName("");
+    setCampus("");
     setContact("");
     setCategory("");
     setOccurredAt(defaultOccurredAt());
@@ -167,6 +170,15 @@ function FeedbackPage() {
                   value={name}
                   onChange={(e) => setName(e.target.value.slice(0, 30))}
                   placeholder="选填"
+                  className="h-11"
+                />
+              </Field>
+
+              <Field label="校区" required hint="请输入你所在的校区，便于精准转办">
+                <Input
+                  value={campus}
+                  onChange={(e) => setCampus(e.target.value.slice(0, 30))}
+                  placeholder="如：主校区 / 南校区 / 医学院校区"
                   className="h-11"
                 />
               </Field>
