@@ -195,6 +195,13 @@ function AnnouncementsPage() {
                 onClick={() => setOpenId(a.id)}
                 className="group flex h-full flex-col rounded-sm bg-secondary/60 p-6 text-left transition-colors hover:bg-secondary"
               >
+                {a.cover && (
+                  <img
+                    src={a.cover}
+                    alt={a.title}
+                    className="mb-4 h-44 w-full rounded-md object-cover sm:h-56"
+                  />
+                )}
                 <div className="flex items-center gap-2 text-xs">
                   <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 font-medium text-primary">
                     <Pin className="h-3 w-3" /> 置顶
@@ -263,9 +270,17 @@ function AnnouncementsPage() {
                     onClick={() => setOpenId(a.id)}
                     className="flex flex-1 items-start gap-4 text-left"
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
-                      <Megaphone className="h-4.5 w-4.5" />
-                    </div>
+                    {a.cover ? (
+                      <img
+                        src={a.cover}
+                        alt={a.title}
+                        className="h-24 w-36 shrink-0 rounded-sm object-cover sm:h-28 sm:w-48"
+                      />
+                    ) : (
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+                        <Megaphone className="h-4.5 w-4.5" />
+                      </div>
+                    )}
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span className="rounded-full bg-primary/10 px-2 py-0.5 font-medium text-primary">

@@ -46,6 +46,13 @@ export function AnnouncementsSection() {
               <span className="hidden w-10 shrink-0 font-display text-xl font-black leading-none text-foreground/20 transition-colors group-hover:text-primary sm:block">
                 {String(i + 1).padStart(2, "0")}
               </span>
+              {n.cover && (
+                <img
+                  src={n.cover}
+                  alt={n.title}
+                  className="h-16 w-28 shrink-0 rounded-md object-cover sm:h-20 sm:w-40"
+                />
+              )}
               <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
                   {n.pinned && (
