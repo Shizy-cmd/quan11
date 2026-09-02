@@ -18,6 +18,8 @@ export type Announcement = {
   readingTime: string;
   pinned?: boolean;
   content: string[];
+  cover?: string;
+  attachments?: { link: string; text: string }[];
 };
 
 export type Guide = {
@@ -47,7 +49,7 @@ const A_KEY = "hdsu.announcements.v1";
 const G_KEY = "hdsu.guides.v1";
 const F_KEY = "hdsu.feedbacks.v1";
 
-const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
+export const DEFAULT_ANNOUNCEMENTS: Announcement[] = [
   {
     id: "a-canteen-2026-07",
     category: "notice",

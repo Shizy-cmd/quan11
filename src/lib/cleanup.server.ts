@@ -6,7 +6,7 @@ import { listRecords } from "@/lib/feishu.server";
 import { listFeedbackRecords } from "@/lib/feedback.server";
 import { deleteFromR2, listR2Keys, publicUrlToKey } from "@/lib/r2.server";
 
-const MANAGED_PREFIXES = ["guides/", "feedback/"];
+const MANAGED_PREFIXES = ["guides/", "feedback/", "announcements/"];
 
 function collectKeysFromFields(
   fields: Record<string, unknown>,

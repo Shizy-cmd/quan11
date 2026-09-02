@@ -302,6 +302,6 @@ function unescapeXml(s: string): string {
  * 仅匹配 guides/ 与 feedback/ 前缀；其它 URL 返回 null。
  */
 export function publicUrlToKey(url: string): string | null {
-  const m = url.match(/\/((?:guides|feedback)\/.*)$/);
+  const m = url.match(/\/((?:guides|feedback|announcements)\/.*)$/);
   return m ? m[1] : null;
 }

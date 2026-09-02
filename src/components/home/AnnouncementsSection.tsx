@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { ArrowRight, Pin, CalendarDays } from "lucide-react";
-import { useContentStore } from "@/lib/store";
+import { useAnnouncements } from "@/lib/announcements";
 import { useReveal } from "@/hooks/use-reveal";
 
 export function AnnouncementsSection() {
   const ref = useReveal<HTMLElement>();
-  const { announcements } = useContentStore();
+  const { items: announcements } = useAnnouncements();
   const recent = [...announcements]
     .sort((a, b) => {
       if (!!b.pinned !== !!a.pinned) return b.pinned ? 1 : -1;

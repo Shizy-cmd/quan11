@@ -25,7 +25,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
 import { useAuth } from "@/lib/auth";
-import { useContentStore, type Announcement } from "@/lib/store";
+import { type Announcement } from "@/lib/store";
+import { useAnnouncements, type AnnouncementPayload } from "@/lib/announcements";
 
 export const Route = createFileRoute("/announcements")({
   head: () => ({
@@ -64,7 +65,7 @@ const EDITABLE_CATS = CATEGORIES.filter((c) => c.key !== "all");
 
 function AnnouncementsPage() {
   const { isAdmin } = useAuth();
-  const { announcements, addAnnouncement, deleteAnnouncement, togglePin } = useContentStore();
+  const { items: announcements, create, remove, togglePin } = useAnnouncements();
 
   const [query, setQuery] = useState("");
   const [active, setActive] = useState<string>("all");
@@ -294,10 +295,7 @@ function AnnouncementsPage() {
                   {isAdmin && (
                     <div className="flex shrink-0 items-center gap-1">
                       <button
-                        onClick={() => {
-                          togglePin(a.id);
-                          toast.success(a.pinned ? "已取消置顶" : "已置顶");
-                        }}
+                        onClick={() => void togglePin(a.id)}
                         className="rounded-lg border border-border bg-background p-2 text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                         title={a.pinned ? "取消置顶" : "置顶"}
                       >
@@ -306,8 +304,7 @@ function AnnouncementsPage() {
                       <button
                         onClick={() => {
                           if (confirm(`确认删除公告「${a.title}」？`)) {
-                            deleteAnnouncement(a.id);
-                            toast.success("公告已删除");
+                            void remove(a.id);
                           }
                         }}
                         className="rounded-lg border border-border bg-background p-2 text-muted-foreground transition-colors hover:border-destructive hover:text-destructive"
@@ -333,10 +330,12 @@ function AnnouncementsPage() {
       {showComposer && (
         <ComposerDialog
           onClose={() => setShowComposer(false)}
-          onSubmit={(payload) => {
-            addAnnouncement(payload);
-            toast.success("公告已发布");
-            setShowComposer(false);
+          onSubmit={async (payload) => {
+            const ok = await create(payload);
+            if (ok) {
+              toast.success("公告已发布");
+              setShowComposer(false);
+            }
           }}
         />
       )}
@@ -399,11 +398,37 @@ function DetailDialog({ item, onClose }: { item: Announcement; onClose: () => vo
         <p className="mt-2 text-xs text-muted-foreground">
           {item.date} · {item.author} · 阅读 {item.readingTime}
         </p>
+        {item.cover && (
+          <img
+            src={item.cover}
+            alt={item.title}
+            className="mt-5 max-h-72 w-full rounded-xl object-cover"
+          />
+        )}
         <div className="mt-6 space-y-3 text-sm leading-relaxed text-foreground/90">
           {item.content.map((p, i) => (
             <p key={i}>{p}</p>
           ))}
         </div>
+        {item.attachments && item.attachments.length > 0 && (
+          <div className="mt-6">
+            <p className="text-xs font-medium text-muted-foreground">附件</p>
+            <ul className="mt-2 space-y-1.5">
+              {item.attachments.map((a, i) => (
+                <li key={`${a.link}-${i}`}>
+                  <a
+                    href={a.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-primary hover:underline"
+                  >
+                    {a.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -414,7 +439,7 @@ function ComposerDialog({
   onSubmit,
 }: {
   onClose: () => void;
-  onSubmit: (payload: Omit<Announcement, "id" | "date">) => void;
+  onSubmit: (payload: AnnouncementPayload) => Promise<void> | void;
 }) {
   const [category, setCategory] = useState("notice");
   const [title, setTitle] = useState("");
@@ -422,6 +447,8 @@ function ComposerDialog({
   const [content, setContent] = useState("");
   const [pinned, setPinned] = useState(false);
   const [readingTime, setReadingTime] = useState("2 分钟");
+  const [cover, setCover] = useState<File | null>(null);
+  const [attachments, setAttachments] = useState<File[]>([]);
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -433,7 +460,7 @@ function ComposerDialog({
       .split(/\n+/)
       .map((s) => s.trim())
       .filter(Boolean);
-    onSubmit({
+    void onSubmit({
       category,
       title: title.trim(),
       summary: summary.trim(),
@@ -441,6 +468,8 @@ function ComposerDialog({
       readingTime,
       pinned,
       content: paragraphs,
+      cover,
+      attachments,
     });
   };
 
@@ -529,6 +558,29 @@ function ComposerDialog({
               />
               置顶该公告
             </label>
+          </div>
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">封面图（选填）</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setCover(e.target.files?.[0] ?? null)}
+                className="block w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground file:mr-2 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-xs file:font-medium file:text-primary"
+              />
+            </div>
+            <div>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">附件（选填，可多选）</label>
+              <input
+                type="file"
+                multiple
+                onChange={(e) =>
+                  setAttachments(Array.from(e.target.files ?? []).slice(0, 10))
+                }
+                className="block w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground file:mr-2 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-xs file:font-medium file:text-primary"
+              />
+            </div>
           </div>
         </div>
 
