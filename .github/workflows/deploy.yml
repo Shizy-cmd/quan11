@@ -21,8 +21,13 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install dependencies
-        run: npm install
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies (from bun.lock)
+        run: bun install --frozen-lockfile
 
       - name: Build & deploy to Cloudflare
         env:
