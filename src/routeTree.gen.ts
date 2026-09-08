@@ -20,6 +20,8 @@ import { Route as ApiUpdateFeedbackRouteImport } from './routes/api/update-feedb
 import { Route as ApiToggleAnnouncementPinRouteImport } from './routes/api/toggle-announcement-pin'
 import { Route as ApiSubmitFeedbackRouteImport } from './routes/api/submit-feedback'
 import { Route as ApiR2CleanupRouteImport } from './routes/api/r2-cleanup'
+import { Route as ApiGuideSaveRouteImport } from './routes/api/guide-save'
+import { Route as ApiGuideRouteImport } from './routes/api/guide'
 import { Route as ApiGetFilesRouteImport } from './routes/api/get-files'
 import { Route as ApiFeedbackListRouteImport } from './routes/api/feedback-list'
 import { Route as ApiDeleteRecordRouteImport } from './routes/api/delete-record'
@@ -86,6 +88,16 @@ const ApiR2CleanupRoute = ApiR2CleanupRouteImport.update({
   path: '/api/r2-cleanup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiGuideSaveRoute = ApiGuideSaveRouteImport.update({
+  id: '/api/guide-save',
+  path: '/api/guide-save',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiGuideRoute = ApiGuideRouteImport.update({
+  id: '/api/guide',
+  path: '/api/guide',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiGetFilesRoute = ApiGetFilesRouteImport.update({
   id: '/api/get-files',
   path: '/api/get-files',
@@ -148,6 +160,8 @@ export interface FileRoutesByFullPath {
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/guide': typeof ApiGuideRoute
+  '/api/guide-save': typeof ApiGuideSaveRoute
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
@@ -170,6 +184,8 @@ export interface FileRoutesByTo {
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/guide': typeof ApiGuideRoute
+  '/api/guide-save': typeof ApiGuideSaveRoute
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
@@ -193,6 +209,8 @@ export interface FileRoutesById {
   '/api/delete-record': typeof ApiDeleteRecordRoute
   '/api/feedback-list': typeof ApiFeedbackListRoute
   '/api/get-files': typeof ApiGetFilesRoute
+  '/api/guide': typeof ApiGuideRoute
+  '/api/guide-save': typeof ApiGuideSaveRoute
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
@@ -217,6 +235,8 @@ export interface FileRouteTypes {
     | '/api/delete-record'
     | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/guide'
+    | '/api/guide-save'
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
@@ -239,6 +259,8 @@ export interface FileRouteTypes {
     | '/api/delete-record'
     | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/guide'
+    | '/api/guide-save'
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
@@ -261,6 +283,8 @@ export interface FileRouteTypes {
     | '/api/delete-record'
     | '/api/feedback-list'
     | '/api/get-files'
+    | '/api/guide'
+    | '/api/guide-save'
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
@@ -284,6 +308,8 @@ export interface RootRouteChildren {
   ApiDeleteRecordRoute: typeof ApiDeleteRecordRoute
   ApiFeedbackListRoute: typeof ApiFeedbackListRoute
   ApiGetFilesRoute: typeof ApiGetFilesRoute
+  ApiGuideRoute: typeof ApiGuideRoute
+  ApiGuideSaveRoute: typeof ApiGuideSaveRoute
   ApiR2CleanupRoute: typeof ApiR2CleanupRoute
   ApiSubmitFeedbackRoute: typeof ApiSubmitFeedbackRoute
   ApiToggleAnnouncementPinRoute: typeof ApiToggleAnnouncementPinRoute
@@ -370,6 +396,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiR2CleanupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/guide-save': {
+      id: '/api/guide-save'
+      path: '/api/guide-save'
+      fullPath: '/api/guide-save'
+      preLoaderRoute: typeof ApiGuideSaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/guide': {
+      id: '/api/guide'
+      path: '/api/guide'
+      fullPath: '/api/guide'
+      preLoaderRoute: typeof ApiGuideRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/get-files': {
       id: '/api/get-files'
       path: '/api/get-files'
@@ -452,6 +492,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDeleteRecordRoute: ApiDeleteRecordRoute,
   ApiFeedbackListRoute: ApiFeedbackListRoute,
   ApiGetFilesRoute: ApiGetFilesRoute,
+  ApiGuideRoute: ApiGuideRoute,
+  ApiGuideSaveRoute: ApiGuideSaveRoute,
   ApiR2CleanupRoute: ApiR2CleanupRoute,
   ApiSubmitFeedbackRoute: ApiSubmitFeedbackRoute,
   ApiToggleAnnouncementPinRoute: ApiToggleAnnouncementPinRoute,

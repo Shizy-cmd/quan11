@@ -4,6 +4,7 @@ import { CheckCircle2, Copy, Paperclip, Upload, X } from "lucide-react";
 
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
+import { useReveal } from "@/hooks/use-reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -55,6 +56,7 @@ function defaultOccurredAt() {
 }
 
 function FeedbackPage() {
+  const ref = useReveal<HTMLElement>();
   const [name, setName] = useState("");
   const [campus, setCampus] = useState<string>("");
   const [contact, setContact] = useState("");
@@ -143,21 +145,23 @@ function FeedbackPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <SiteHeader />
-      <main className="flex-1">
+      <main ref={ref} className="flex-1">
         <section className="border-b border-border/70">
           <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
-            <p className="text-xs font-bold tracking-[0.28em] text-primary">FEEDBACK · 权益反馈</p>
-            <h1 className="mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+            <p className="reveal text-xs font-bold tracking-[0.28em] text-primary">
+              FEEDBACK · 权益反馈
+            </p>
+            <h1 className="reveal reveal-delay-1 mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
               有问题，就来这里反馈
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+            <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               请如实填写以下信息。提交后系统将自动生成问题单号，请妥善保存，便于工作人员与你跟进。
               带 <span className="text-destructive">*</span> 为必填项。
             </p>
           </div>
         </section>
 
-        <section className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
+        <section className="reveal reveal-delay-1 mx-auto max-w-3xl px-4 py-10 sm:px-6">
           {ticket ? (
             <SuccessCard ticket={ticket} onReset={resetForm} />
           ) : (

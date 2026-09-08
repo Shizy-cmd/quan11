@@ -80,14 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
+          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
       },
       { name: "author", content: "学生权益中心" },
       { property: "og:title", content: "学生权益中心 | 全心权益，全意为你" },
       {
         property: "og:description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
+          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -95,10 +95,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "twitter:description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生答疑、校园指南、权益公告，一站完成。",
+          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
       },
     ],
     links: [
+      { rel: "icon", type: "image/png", href: "/favicon.png" },
       {
         rel: "stylesheet",
         href: appCss,

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
+import { useReveal } from "@/hooks/use-reveal";
 import { GUIDE_SECTIONS, type GuideSection } from "@/lib/guideData";
 import { useAuth } from "@/lib/auth";
 
@@ -51,9 +52,13 @@ function fileInSection(fileSection: string, section: GuideSection) {
 }
 
 function GuidePage() {
+  const ref = useReveal<HTMLDivElement>();
   const [query, setQuery] = useState("");
   const [files, setFiles] = useState<RemoteFile[]>([]);
   const [loadingFiles, setLoadingFiles] = useState(true);
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const toggle = (id: string) => setOpenId((cur) => (cur === id ? null : id));
 
   const refresh = async () => {
     try {
@@ -82,26 +87,26 @@ function GuidePage() {
   }, [query]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={ref} className="min-h-screen bg-background">
       <SiteHeader />
 
       <section className="relative overflow-hidden border-b border-border/70">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="reveal flex items-center gap-2 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">
               首页
             </Link>
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-foreground">校园指南</span>
           </div>
-          <h1 className="mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
             校园指南
           </h1>
-          <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+          <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             17 个板块，覆盖政策文件、办事流程与常用平台。点击链接即可查看或下载对应 PDF。
           </p>
 
-          <div className="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2">
+          <div className="reveal reveal-delay-3 mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2">
             <div className="flex flex-1 items-center gap-2 px-3">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
@@ -120,61 +125,67 @@ function GuidePage() {
         </div>
       </section>
 
-      <section className="border-b border-border bg-background/60">
-        <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            板块导航
-          </p>
-          <div className="mt-3 flex flex-wrap gap-2">
-            {GUIDE_SECTIONS.map((s, i) => (
-              <a
-                key={s.id}
-                href={`#${s.id}`}
-                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary hover:text-primary"
-              >
-                <span className="text-muted-foreground">{i + 1}.</span>
-                {s.title}
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <main className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        {sections.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
-            <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
-            <p className="mt-4 text-sm font-medium text-foreground">没有匹配的板块</p>
-            <p className="mt-1 text-xs text-muted-foreground">换一个关键词试试。</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {sections.map((s, i) => (
-              <SectionBlock
-                key={s.id}
-                section={s}
-                index={i + 1}
-                files={files}
-                loadingFiles={loadingFiles}
-                onChanged={refresh}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/70 pt-8 sm:flex-row sm:items-center">
-          <div>
-            <p className="text-base font-semibold text-foreground">没找到你需要的文件？</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              提交反馈告诉我们，或联系学生权益中心补充最新文件。
+      <main className="reveal mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-start lg:gap-12">
+          {/* 板块导航 · 左侧栏 */}
+          <aside className="reveal lg:sticky lg:top-24">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              板块导航
             </p>
+            <nav className="mt-3 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
+              {sections.map((s, i) => (
+                <a
+                  key={s.id}
+                  href={`#${s.id}`}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary hover:text-primary lg:rounded-lg lg:px-4 lg:py-2.5 lg:text-sm"
+                >
+                  <span className="text-muted-foreground">{i + 1}.</span>
+                  {s.title}
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          {/* 板块内容 */}
+          <div className="mt-10 lg:mt-0">
+            {sections.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center">
+                <FileText className="mx-auto h-10 w-10 text-muted-foreground" />
+                <p className="mt-4 text-sm font-medium text-foreground">没有匹配的板块</p>
+                <p className="mt-1 text-xs text-muted-foreground">换一个关键词试试。</p>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {sections.map((s, i) => (
+                  <SectionBlock
+                    key={s.id}
+                    section={s}
+                    index={i + 1}
+                    files={files}
+                    loadingFiles={loadingFiles}
+                    onChanged={refresh}
+                    open={openId === s.id}
+                    onToggle={() => toggle(s.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="reveal mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/70 pt-8 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-base font-semibold text-foreground">没找到你需要的文件？</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  提交反馈告诉我们，或联系学生权益中心补充最新文件。
+                </p>
+              </div>
+              <Link to="/feedback">
+                <Button className="rounded-full font-bold">
+                  去提交反馈
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
           </div>
-          <Link to="/feedback">
-            <Button className="rounded-full font-bold">
-              去提交反馈
-              <ArrowRight className="ml-1 h-4 w-4" />
-            </Button>
-          </Link>
         </div>
       </main>
 
@@ -189,50 +200,90 @@ function SectionBlock({
   files,
   loadingFiles,
   onChanged,
+  open,
+  onToggle,
 }: {
   section: GuideSection;
   index: number;
   files: RemoteFile[];
   loadingFiles: boolean;
   onChanged: () => void | Promise<void>;
+  open: boolean;
+  onToggle: () => void;
 }) {
   const { isAdmin } = useAuth();
   const uploads = files.filter((f) => fileInSection(f.section, section));
+  const hasMap = section.kind === "map" && Boolean(section.imageUrl);
 
   return (
-    <section id={section.id} className="scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10">
+    <section
+      id={section.id}
+      className="reveal scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10"
+    >
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-medium text-primary">
-            <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-2">
-              {index}
-            </span>
-            <span className="uppercase tracking-wider">Section</span>
-          </div>
-          <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">{section.title}</h2>
-          {section.desc && <p className="mt-1 text-sm text-muted-foreground">{section.desc}</p>}
-        </div>
+        <h2 className="flex-1 text-xl font-bold text-foreground sm:text-2xl">
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-expanded={open}
+            className="group flex w-full items-start gap-4 text-left"
+          >
+            <div className="flex-1">
+              <div className="flex items-center gap-2 text-xs font-medium text-primary">
+                <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-2">
+                  {index}
+                </span>
+                <span className="uppercase tracking-wider">Section</span>
+              </div>
+              <span className="mt-2 block text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
+                {section.title}
+              </span>
+              {section.desc && (
+                <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                  {section.desc}
+                </span>
+              )}
+            </div>
+            <ChevronRight
+              className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
+                open ? "rotate-90 text-foreground" : ""
+              }`}
+            />
+          </button>
+        </h2>
         {isAdmin && <AdminUpload channel={section.id} onDone={onChanged} />}
       </div>
 
-      <div className="mt-6">
-        {section.kind === "map" && section.imageUrl ? (
-          <div className="overflow-hidden">
-            <img
-              src={section.imageUrl}
-              alt="杭州电子科技大学校园地图"
-              className="w-full object-contain"
-            />
-          </div>
-        ) : null}
+      <div
+        className={`grid transition-all duration-300 ease-out ${
+          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+        }`}
+      >
+        <div className="overflow-hidden">
+          <div className="mt-6">
+            {hasMap ? (
+              <div className="overflow-hidden">
+                <img
+                  src={section.imageUrl}
+                  alt="杭州电子科技大学校园地图"
+                  className="w-full object-contain"
+                />
+              </div>
+            ) : null}
 
-        {!loadingFiles && uploads.length > 0 ? (
-          <ul className="mt-2 divide-y divide-border/60">
-            {uploads.map((f) => (
-              <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
-            ))}
-          </ul>
-        ) : null}
+            {!loadingFiles && uploads.length > 0 ? (
+              <ul className="divide-y divide-border/60">
+                {uploads.map((f) => (
+                  <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
+                ))}
+              </ul>
+            ) : !loadingFiles && !hasMap ? (
+              <p className="rounded-xl border border-dashed border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
+                该板块暂无上传文件
+              </p>
+            ) : null}
+          </div>
+        </div>
       </div>
     </section>
   );

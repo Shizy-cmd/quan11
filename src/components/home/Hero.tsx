@@ -18,7 +18,7 @@ export function Hero() {
           </span>
         </h1>
         <p className="ml-auto mt-8 max-w-md text-right text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
-          你的校园权益服务平台：有问题就来反馈，有疑问看新生答疑，
+          你的校园权益服务平台：有问题就来反馈，有疑问看新生指北，
           办事流程查校园指南，最新动态看权益公告。
         </p>
       </div>

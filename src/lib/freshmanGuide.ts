@@ -6,6 +6,7 @@ export type GuideItem = {
   content?: string;
   placeholder?: boolean;
   sources?: { title: string; url?: string }[];
+  images?: string[];
 };
 
 export type GuideGroup = {

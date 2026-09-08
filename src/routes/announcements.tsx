@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { SiteHeader } from "@/components/home/SiteHeader";
 import { SiteFooter } from "@/components/home/SiteFooter";
+import { useReveal } from "@/hooks/use-reveal";
 import { useAuth } from "@/lib/auth";
 import { type Announcement } from "@/lib/store";
 import { useAnnouncements, type AnnouncementPayload } from "@/lib/announcements";
@@ -64,6 +65,7 @@ const CATEGORIES: Category[] = [
 const EDITABLE_CATS = CATEGORIES.filter((c) => c.key !== "all");
 
 function AnnouncementsPage() {
+  const ref = useReveal<HTMLDivElement>();
   const { isAdmin } = useAuth();
   const { items: announcements, create, remove, togglePin } = useAnnouncements();
 
@@ -97,20 +99,20 @@ function AnnouncementsPage() {
   const openItem = openId ? (announcements.find((a) => a.id === openId) ?? null) : null;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div ref={ref} className="min-h-screen bg-background">
       <SiteHeader />
 
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/70">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="reveal flex items-center gap-2 text-xs text-muted-foreground">
             <Link to="/" className="hover:text-foreground">
               首页
             </Link>
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-foreground">权益公告</span>
           </div>
-          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="reveal reveal-delay-1 mt-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Megaphone className="h-5 w-5" />
@@ -126,12 +128,12 @@ function AnnouncementsPage() {
               </Button>
             )}
           </div>
-          <p className="mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+          <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             公告、政策、月报、处理公示统一发布，让每一件权益事都能被看见、被追踪。
           </p>
 
           <form
-            className="mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2"
+            className="reveal reveal-delay-3 mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2"
             onSubmit={(e) => e.preventDefault()}
           >
             <div className="flex flex-1 items-center gap-2 px-3">
@@ -148,7 +150,7 @@ function AnnouncementsPage() {
             </Button>
           </form>
 
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="reveal reveal-delay-3 mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StatCard label="公告总数" value={stats.total} icon={Bell} />
             <StatCard label="政策更新" value={stats.policy} icon={ShieldCheck} />
             <StatCard label="工作月报" value={stats.work} icon={TrendingUp} />
@@ -158,7 +160,7 @@ function AnnouncementsPage() {
       </section>
 
       {/* Category tabs */}
-      <section className="mx-auto max-w-6xl px-4 pt-12 sm:px-6">
+      <section className="reveal mx-auto max-w-6xl px-4 pt-12 sm:px-6">
         <div className="flex flex-wrap items-center gap-2">
           {CATEGORIES.map((c) => {
             const Icon = c.icon;
@@ -183,7 +185,7 @@ function AnnouncementsPage() {
 
       {/* Pinned */}
       {active === "all" && !query && pinned.length > 0 && (
-        <section id="pinned" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+        <section id="pinned" className="reveal mx-auto max-w-6xl px-4 py-10 sm:px-6">
           <div className="flex items-center gap-2">
             <Pin className="h-4 w-4 text-primary" />
             <h2 className="text-lg font-bold text-foreground">置顶公告</h2>
@@ -232,7 +234,7 @@ function AnnouncementsPage() {
       )}
 
       {/* List */}
-      <section id="list" className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <section id="list" className="reveal mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="flex items-end justify-between">
           <div>
             <h2 className="text-xl font-bold text-foreground">

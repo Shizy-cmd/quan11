@@ -201,6 +201,72 @@ export async function deleteFromR2(key: string): Promise<void> {
 }
 
 /**
+ * 读取 R2 中的单个对象。对象不存在时返回 null。
+ */
+export async function getObjectFromR2(key: string): Promise<string | null> {
+  const accountId = requireEnv("R2_ACCOUNT_ID");
+  const accessKeyId = requireEnv("R2_ACCESS_KEY_ID");
+  const secretAccessKey = requireEnv("R2_SECRET_ACCESS_KEY");
+  const bucket = requireEnv("R2_BUCKET_NAME");
+  const host = `${accountId}.r2.cloudflarestorage.com`;
+  const path = `/${bucket}/${key}`;
+  const url = `https://${host}${path}`;
+  const region = "auto";
+
+  const now = new Date();
+  const amzDate = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const dateStamp = amzDate.slice(0, 8);
+  const payloadHash = await sha256Hex("");
+
+  const headers: Record<string, string> = {
+    host,
+    "x-amz-content-sha256": payloadHash,
+    "x-amz-date": amzDate,
+  };
+  const signedHeaderNames = Object.keys(headers).sort();
+  const canonicalHeaders =
+    signedHeaderNames.map((name) => `${name}:${headers[name]}`).join("\n") +
+    "\n";
+  const signedHeaders = signedHeaderNames.join(";");
+
+  const canonicalRequest = [
+    "GET",
+    path,
+    "",
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+
+  const scope = `${dateStamp}/${region}/s3/aws4_request`;
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    scope,
+    await sha256Hex(canonicalRequest),
+  ].join("\n");
+  const kDate = await hmac(encoder.encode(`AWS4${secretAccessKey}`), dateStamp);
+  const kRegion = await hmac(kDate, region);
+  const kService = await hmac(kRegion, "s3");
+  const kSigning = await hmac(kService, "aws4_request");
+  const signature = toHex(await hmac(kSigning, stringToSign));
+  const authorization =
+    `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${scope}, ` +
+    `SignedHeaders=${signedHeaders}, Signature=${signature}`;
+
+  const response = await fetch(url, {
+    method: "GET",
+    headers: { ...headers, authorization },
+  });
+  if (response.status === 404) return null;
+  if (!response.ok) {
+    const detail = (await response.text()).slice(0, 300);
+    throw new Error(`R2 读取失败（${response.status}）: ${detail}`);
+  }
+  return await response.text();
+}
+
+/**
  * 列出 R2 桶内全部对象 key（S3 ListObjectsV2，自动翻页）。
  */
 export async function listR2Keys(): Promise<string[]> {

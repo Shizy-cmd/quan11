@@ -137,7 +137,7 @@ function AdminFeedbackPage() {
   };
 
   const saveRemark = async (id: string, remark: string) => {
-    if (!adminToken) return;
+    if (!adminToken) return false;
     try {
       const res = await fetch("/api/update-feedback", {
         method: "POST",

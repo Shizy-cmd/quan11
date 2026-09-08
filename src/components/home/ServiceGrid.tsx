@@ -13,7 +13,7 @@ const services = [
   {
     no: "02",
     icon: MessagesSquare,
-    title: "新生答疑",
+    title: "新生指北",
     desc: "报到、宿舍、选课、转专业、竞赛、防诈骗……学长学姐整理的新生必看问答。",
     href: "/qa",
   },

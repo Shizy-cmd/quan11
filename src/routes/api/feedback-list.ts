@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  listFeedbackRecords,
-  type FeedbackView,
-} from "@/lib/feedback.server";
+import { listFeedbackRecords } from "@/lib/feedback.server";
+import type { FeedbackView } from "@/lib/feedbackData";
 
 function checkAuth(request: Request): boolean {
   const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";

@@ -3,10 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useAuth } from "@/lib/auth";
-import {
-  DEFAULT_ANNOUNCEMENTS,
-  type Announcement,
-} from "@/lib/store";
+import type { Announcement } from "@/lib/store";
 import type { AnnouncementView } from "@/lib/announceData";
 
 export type AnnouncementPayload = {
@@ -24,7 +21,7 @@ export type AnnouncementPayload = {
 
 export function useAnnouncements() {
   const { adminToken } = useAuth();
-  const [items, setItems] = useState<Announcement[]>(DEFAULT_ANNOUNCEMENTS);
+  const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
@@ -38,7 +35,7 @@ export function useAnnouncements() {
         setItems(json.items);
       }
     } catch {
-      /* 加载失败则沿用种子数据 */
+      /* 加载失败则保持为空，不显示旧示例 */
     }
     setLoading(false);
   }, []);

@@ -14,7 +14,6 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>() {
       return;
     }
 
-    const targets = root.querySelectorAll<HTMLElement>(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -27,8 +26,23 @@ export function useReveal<T extends HTMLElement = HTMLDivElement>() {
       { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
     );
 
-    targets.forEach((t) => observer.observe(t));
-    return () => observer.disconnect();
+    const observeAll = () => {
+      root
+        .querySelectorAll<HTMLElement>(".reveal:not(.is-visible)")
+        .forEach((t) => observer.observe(t));
+    };
+
+    observeAll();
+
+    // Re-observe any .reveal elements added later (e.g. content loaded
+    // after mount) so they don't stay stuck at opacity 0.
+    const mo = new MutationObserver(() => observeAll());
+    mo.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   return ref;

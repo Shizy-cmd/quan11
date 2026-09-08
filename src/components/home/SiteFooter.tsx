@@ -44,7 +44,7 @@ export function SiteFooter() {
               </li>
               <li>
                 <Link to="/qa" className="transition-colors hover:text-primary-foreground">
-                  新生答疑
+                  新生指北
                 </Link>
               </li>
               <li>
