@@ -11,7 +11,6 @@ import { useReveal } from "@/hooks/use-reveal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import waterLilies from "@/assets/user-paintings/22b07edad047348b403aa98d4f35806e.jpg";
 
 export const Route = createFileRoute("/qa")({
   head: () => ({
@@ -31,8 +30,6 @@ export const Route = createFileRoute("/qa")({
   }),
   component: QAPage,
 });
-
-const TOTAL_ITEMS = FRESHMAN_GUIDE.reduce((n, c) => n + chapterCount(c), 0);
 
 function fileToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -84,8 +81,7 @@ function QAPage() {
               新生指北
             </h1>
             <p className="reveal reveal-delay-2 mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              开学准备、宿舍、生活、助学政策、附录五大篇章，共 {TOTAL_ITEMS} 条。
-              由学长学姐整理并人工审核，内容持续补充中。
+              报到前的准备、宿舍与校园生活、助学政策、常见问题，新生需要的内容都按篇章整理在这里。
             </p>
           </div>
         </section>
@@ -140,27 +136,33 @@ function QAPage() {
           </section>
         )}
 
-        {/* Chapter nav · 睡莲做文字底 */}
-        <section className="relative overflow-hidden">
-          <img
-            src={waterLilies}
-            alt=""
-            aria-hidden="true"
-            className="absolute inset-0 h-full w-full object-cover blur-[3px]"
-          />
-          <div className="absolute inset-0 bg-primary/70" />
-          <div className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <div className="reveal flex flex-wrap justify-center gap-2">
-              {chapters.map((c) => (
-                <a
-                  key={c.id}
-                  href={`#chapter-${c.id}`}
-                  className="rounded-full bg-primary-foreground/15 px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-foreground/25"
-                >
-                  {c.title}
-                  <span className="ml-1.5 text-xs opacity-70">{chapterCount(c)}</span>
-                </a>
-              ))}
+        {/* Chapter nav · 编辑式目录条 */}
+        <section className="border-b border-border/70 bg-secondary/45">
+          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+            <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-10">
+              <div className="flex shrink-0 items-baseline gap-2.5">
+                <span className="text-sm font-bold tracking-tight text-foreground">目录</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+                  Contents
+                </span>
+              </div>
+              <nav aria-label="章节导航" className="flex flex-wrap gap-2">
+                {chapters.map((c, ci) => (
+                  <a
+                    key={c.id}
+                    href={`#chapter-${c.id}`}
+                    className="group inline-flex items-center gap-2 rounded-full border border-border bg-background px-3.5 py-1.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                  >
+                    <span className="font-display text-[11px] font-black tabular-nums text-primary transition-colors group-hover:text-primary-foreground/70">
+                      {String(ci + 1).padStart(2, "0")}
+                    </span>
+                    {c.title}
+                    <span className="text-[11px] font-medium tabular-nums text-muted-foreground transition-colors group-hover:text-primary-foreground/70">
+                      {chapterCount(c)}
+                    </span>
+                  </a>
+                ))}
+              </nav>
             </div>
           </div>
         </section>

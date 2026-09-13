@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/lib/auth";
 import { ContentStoreProvider } from "@/lib/store";
+import { useVisitTracking } from "@/hooks/use-visit-tracking";
 
 function NotFoundComponent() {
   return (
@@ -142,6 +143,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useVisitTracking();
 
   return (
     <QueryClientProvider client={queryClient}>

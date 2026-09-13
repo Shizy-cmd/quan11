@@ -15,8 +15,10 @@ import { Route as FeedbackRouteImport } from './routes/feedback'
 import { Route as AnnouncementsRouteImport } from './routes/announcements'
 import { Route as AdminFeedbackRouteImport } from './routes/admin-feedback'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiVisitStatsRouteImport } from './routes/api/visit-stats'
 import { Route as ApiUploadRouteImport } from './routes/api/upload'
 import { Route as ApiUpdateFeedbackRouteImport } from './routes/api/update-feedback'
+import { Route as ApiTrackVisitRouteImport } from './routes/api/track-visit'
 import { Route as ApiToggleAnnouncementPinRouteImport } from './routes/api/toggle-announcement-pin'
 import { Route as ApiSubmitFeedbackRouteImport } from './routes/api/submit-feedback'
 import { Route as ApiR2CleanupRouteImport } from './routes/api/r2-cleanup'
@@ -62,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiVisitStatsRoute = ApiVisitStatsRouteImport.update({
+  id: '/api/visit-stats',
+  path: '/api/visit-stats',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiUploadRoute = ApiUploadRouteImport.update({
   id: '/api/upload',
   path: '/api/upload',
@@ -70,6 +77,11 @@ const ApiUploadRoute = ApiUploadRouteImport.update({
 const ApiUpdateFeedbackRoute = ApiUpdateFeedbackRouteImport.update({
   id: '/api/update-feedback',
   path: '/api/update-feedback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiTrackVisitRoute = ApiTrackVisitRouteImport.update({
+  id: '/api/track-visit',
+  path: '/api/track-visit',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiToggleAnnouncementPinRoute =
@@ -165,8 +177,10 @@ export interface FileRoutesByFullPath {
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
+  '/api/track-visit': typeof ApiTrackVisitRoute
   '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/visit-stats': typeof ApiVisitStatsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,8 +203,10 @@ export interface FileRoutesByTo {
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
+  '/api/track-visit': typeof ApiTrackVisitRoute
   '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/visit-stats': typeof ApiVisitStatsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,8 +230,10 @@ export interface FileRoutesById {
   '/api/r2-cleanup': typeof ApiR2CleanupRoute
   '/api/submit-feedback': typeof ApiSubmitFeedbackRoute
   '/api/toggle-announcement-pin': typeof ApiToggleAnnouncementPinRoute
+  '/api/track-visit': typeof ApiTrackVisitRoute
   '/api/update-feedback': typeof ApiUpdateFeedbackRoute
   '/api/upload': typeof ApiUploadRoute
+  '/api/visit-stats': typeof ApiVisitStatsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -240,8 +258,10 @@ export interface FileRouteTypes {
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
+    | '/api/track-visit'
     | '/api/update-feedback'
     | '/api/upload'
+    | '/api/visit-stats'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,8 +284,10 @@ export interface FileRouteTypes {
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
+    | '/api/track-visit'
     | '/api/update-feedback'
     | '/api/upload'
+    | '/api/visit-stats'
   id:
     | '__root__'
     | '/'
@@ -288,8 +310,10 @@ export interface FileRouteTypes {
     | '/api/r2-cleanup'
     | '/api/submit-feedback'
     | '/api/toggle-announcement-pin'
+    | '/api/track-visit'
     | '/api/update-feedback'
     | '/api/upload'
+    | '/api/visit-stats'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -313,8 +337,10 @@ export interface RootRouteChildren {
   ApiR2CleanupRoute: typeof ApiR2CleanupRoute
   ApiSubmitFeedbackRoute: typeof ApiSubmitFeedbackRoute
   ApiToggleAnnouncementPinRoute: typeof ApiToggleAnnouncementPinRoute
+  ApiTrackVisitRoute: typeof ApiTrackVisitRoute
   ApiUpdateFeedbackRoute: typeof ApiUpdateFeedbackRoute
   ApiUploadRoute: typeof ApiUploadRoute
+  ApiVisitStatsRoute: typeof ApiVisitStatsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -361,6 +387,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/visit-stats': {
+      id: '/api/visit-stats'
+      path: '/api/visit-stats'
+      fullPath: '/api/visit-stats'
+      preLoaderRoute: typeof ApiVisitStatsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/upload': {
       id: '/api/upload'
       path: '/api/upload'
@@ -373,6 +406,13 @@ declare module '@tanstack/react-router' {
       path: '/api/update-feedback'
       fullPath: '/api/update-feedback'
       preLoaderRoute: typeof ApiUpdateFeedbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/track-visit': {
+      id: '/api/track-visit'
+      path: '/api/track-visit'
+      fullPath: '/api/track-visit'
+      preLoaderRoute: typeof ApiTrackVisitRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/toggle-announcement-pin': {
@@ -497,8 +537,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiR2CleanupRoute: ApiR2CleanupRoute,
   ApiSubmitFeedbackRoute: ApiSubmitFeedbackRoute,
   ApiToggleAnnouncementPinRoute: ApiToggleAnnouncementPinRoute,
+  ApiTrackVisitRoute: ApiTrackVisitRoute,
   ApiUpdateFeedbackRoute: ApiUpdateFeedbackRoute,
   ApiUploadRoute: ApiUploadRoute,
+  ApiVisitStatsRoute: ApiVisitStatsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
