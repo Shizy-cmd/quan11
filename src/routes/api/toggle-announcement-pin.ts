@@ -1,17 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isAdminRequest } from "@/lib/adminAuth.server";
 import { toggleAnnouncementPin } from "@/lib/announcement.server";
-
-function checkAuth(request: Request): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
-  const got = request.headers.get("x-admin-password");
-  return !!got && got === expected;
-}
 
 export const Route = createFileRoute("/api/toggle-announcement-pin")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!checkAuth(request)) return new Response("Unauthorized", { status: 401 });
+        if (!isAdminRequest(request)) return new Response("Unauthorized", { status: 401 });
         try {
           const body = (await request.json()) as { id?: string; pinned?: boolean };
           if (!body.id) {

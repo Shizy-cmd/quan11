@@ -1,13 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isAdminRequest } from "@/lib/adminAuth.server";
 import { uploadToR2 } from "@/lib/r2.server";
 import { createAnnouncement } from "@/lib/announcement.server";
 import { isAnnounceCategory, type AnnounceCategory } from "@/lib/announceData";
-
-function checkAuth(request: Request): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
-  const got = request.headers.get("x-admin-password");
-  return !!got && got === expected;
-}
 
 function json(status: number, body: Record<string, unknown>) {
   return new Response(JSON.stringify(body), {
@@ -20,7 +15,7 @@ export const Route = createFileRoute("/api/create-announcement")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!checkAuth(request)) return json(401, { ok: false, error: "Unauthorized" });
+        if (!isAdminRequest(request)) return json(401, { ok: false, error: "Unauthorized" });
         try {
           const form = await request.formData();
           const category = String(form.get("category") ?? "").trim();

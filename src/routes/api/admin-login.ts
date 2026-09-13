@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { verifyAdminPassword } from "@/lib/adminAuth.server";
 
 export const Route = createFileRoute("/api/admin-login")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
         try {
           const body = (await request.json()) as { password?: string };
-          if (body.password && body.password === expected) {
+          if (verifyAdminPassword(body.password)) {
             return Response.json({ ok: true });
           }
         } catch {

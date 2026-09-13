@@ -1,15 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isAdminRequest } from "@/lib/adminAuth.server";
 import {
   deleteOrphans,
   findOrphans,
   type CleanupResult,
 } from "@/lib/cleanup.server";
-
-function checkAuth(request: Request): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
-  const got = request.headers.get("x-admin-password");
-  return !!got && got === expected;
-}
 
 export type R2CleanupResponse = {
   ok: boolean;
@@ -23,7 +18,7 @@ export const Route = createFileRoute("/api/r2-cleanup")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        if (!checkAuth(request)) {
+        if (!isAdminRequest(request)) {
           return new Response("Unauthorized", { status: 401 });
         }
         try {

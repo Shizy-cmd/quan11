@@ -1,18 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { isAdminRequest } from "@/lib/adminAuth.server";
 import { listFeedbackRecords } from "@/lib/feedback.server";
 import type { FeedbackView } from "@/lib/feedbackData";
-
-function checkAuth(request: Request): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "quan11-admin";
-  const got = request.headers.get("x-admin-password");
-  return !!got && got === expected;
-}
 
 export const Route = createFileRoute("/api/feedback-list")({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        if (!checkAuth(request)) {
+        if (!isAdminRequest(request)) {
           return new Response("Unauthorized", { status: 401 });
         }
         try {
