@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { FRESHMAN_GUIDE, type GuideChapter, type GuideItem } from "@/lib/freshmanGuide";
+import {
+  FRESHMAN_GUIDE,
+  normalizeChapters,
+  type GuideChapter,
+  type GuideItem,
+} from "@/lib/freshmanGuide";
 import { useAuth } from "@/lib/auth";
 
 const STORAGE_KEY = "hdsu.freshman-guide.v1";
@@ -35,21 +40,18 @@ function resolveChapters(
 ): GuideChapter[] {
   return base.map((chapter) => ({
     ...chapter,
-    groups: chapter.groups.map((group) => ({
-      ...group,
-      items: group.items.map((item) => {
-        const o = overrides[item.id];
-        if (!o) return item;
-        const content = o.content ?? item.content;
-        return {
-          ...item,
-          title: o.title ?? item.title,
-          content,
-          placeholder: !content,
-          images: o.images,
-        };
-      }),
-    })),
+    items: chapter.items.map((item) => {
+      const o = overrides[item.id];
+      if (!o) return item;
+      const content = o.content ?? item.content;
+      return {
+        ...item,
+        title: o.title ?? item.title,
+        content,
+        placeholder: !content,
+        images: o.images,
+      };
+    }),
   }));
 }
 
@@ -72,9 +74,10 @@ export function useGuideData() {
       .then((res) => res.json())
       .then((json) => {
         if (cancelled) return;
-        if (json.ok && Array.isArray(json.chapters) && json.chapters.length > 0) {
-          setBase(json.chapters);
-        }
+        if (!json.ok) return;
+        // 旧版「章 → 分组」存档与当前目录不兼容时会返回 null，此时沿用内置目录。
+        const remote = normalizeChapters(json.chapters);
+        if (remote) setBase(remote);
       })
       .catch(() => {});
     return () => {

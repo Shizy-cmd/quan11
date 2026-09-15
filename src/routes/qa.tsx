@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronRight, ExternalLink, ArrowRight, PenLine, Plus, X, Save } from "lucide-react";
 import { toast } from "sonner";
-import { FRESHMAN_GUIDE, chapterCount, type GuideItem } from "@/lib/freshmanGuide";
+import { guideItemCount, type GuideItem } from "@/lib/freshmanGuide";
 import { useGuideData } from "@/lib/useGuide";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/home/SiteHeader";
@@ -19,12 +19,12 @@ export const Route = createFileRoute("/qa")({
       {
         name: "description",
         content:
-          "新生指北：开学准备、宿舍、生活、助学政策、附录五大篇章，报到、选课、食堂、快递、奖助学金等校园生活常见问题，由学长学姐整理并人工审核。",
+          "新生指北：HDUer 的第一颗纽扣、住在杭电、学在杭电、吃在杭电、行在杭电与附录六大篇章，覆盖账号认证、报到、宿舍、选课、食堂、快递、奖助学金等新生内容，由学长学姐整理并人工审核。",
       },
       { property: "og:title", content: "新生指北 | 学生权益中心" },
       {
         property: "og:description",
-        content: "开学准备、宿舍、生活、助学政策、附录，新生必看的校园指北。",
+        content: "六大篇章，从第一颗纽扣到校园日常，新生必看的杭电指北。",
       },
     ],
   }),
@@ -59,142 +59,138 @@ function fileToDataUrl(file: File): Promise<string> {
 }
 
 function QAPage() {
-  const ref = useReveal<HTMLElement>();
+  const ref = useReveal<HTMLDivElement>();
   const { chapters, updateItem, removeImage, reset, saveToServer, saving } = useGuideData();
   const { isAdmin } = useAuth();
   const [openId, setOpenId] = useState<string | null>(null);
   const [editMode, setEditMode] = useState(false);
 
   const toggle = (id: string) => setOpenId((cur) => (cur === id ? null : id));
+  const totalItems = guideItemCount(chapters);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
+    <div ref={ref} className="min-h-screen bg-background">
       <SiteHeader />
-      <main ref={ref} className="flex-1">
-        {/* Header */}
-        <section className="border-b border-border/70">
-          <div className="mx-auto max-w-6xl px-4 pb-12 pt-16 sm:px-6 md:pb-16 md:pt-20">
-            <p className="reveal text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-              Freshman guide · 新生指北
-            </p>
-            <h1 className="reveal reveal-delay-1 mt-4 max-w-3xl font-display text-5xl font-black leading-[1.06] tracking-tight text-foreground sm:text-6xl">
-              新生指北
-            </h1>
-            <p className="reveal reveal-delay-2 mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
-              报到前的准备、宿舍与校园生活、助学政策、常见问题，新生需要的内容都按篇章整理在这里。
-            </p>
+
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/70">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-16">
+          <div className="reveal flex items-center gap-2 text-xs text-muted-foreground">
+            <Link to="/" className="hover:text-foreground">
+              首页
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <span className="text-foreground">新生指北</span>
           </div>
-        </section>
+          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+            新生指北
+          </h1>
+          <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            {chapters.length} 个篇章、{totalItems} 个单元，从报到前的第一颗纽扣到校园日常，
+            由学长学姐整理并人工审核。
+          </p>
+        </div>
+      </section>
 
-        {/* 管理员编辑栏 */}
-        {isAdmin && (
-          <section className="border-b border-border/70 bg-muted/40">
-            <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
-              <p className="text-xs font-medium text-muted-foreground">
-                管理员：开启后可逐条编辑标题、正文与配图，内容保存在当前浏览器。
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  size="sm"
-                  variant={editMode ? "default" : "outline"}
-                  className="h-9 rounded-full font-semibold"
-                  onClick={() => setEditMode((v) => !v)}
-                >
-                  <PenLine className="mr-1 h-3.5 w-3.5" />
-                  {editMode ? "完成编辑" : "编辑模式"}
-                </Button>
-                {editMode && (
-                  <>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-9 rounded-full font-semibold"
-                      disabled={saving}
-                      onClick={async () => {
-                        const ok = await saveToServer();
-                        if (ok) toast.success("已保存并发布到服务器");
-                        else toast.error("保存失败，请确认服务器与 R2 可用");
-                      }}
-                    >
-                      <Save className="mr-1 h-3.5 w-3.5" />
-                      {saving ? "保存中…" : "保存并发布"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      className="h-9 rounded-full"
-                      onClick={() => {
-                        if (confirm("确认清除本地编辑？恢复为当前线上/默认内容。")) reset();
-                      }}
-                    >
-                      恢复默认
-                    </Button>
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* Chapter nav · 编辑式目录条 */}
-        <section className="border-b border-border/70 bg-secondary/45">
-          <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-            <div className="reveal flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-10">
-              <div className="flex shrink-0 items-baseline gap-2.5">
-                <span className="text-sm font-bold tracking-tight text-foreground">目录</span>
-                <span className="text-[11px] font-semibold uppercase tracking-[0.24em] text-muted-foreground">
-                  Contents
-                </span>
-              </div>
-              <nav aria-label="章节导航" className="flex flex-wrap gap-2">
-                {chapters.map((c, ci) => (
-                  <a
-                    key={c.id}
-                    href={`#chapter-${c.id}`}
-                    className="group inline-flex items-center gap-2 rounded-full border border-border bg-background px-3.5 py-1.5 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+      {/* 管理员编辑栏 */}
+      {isAdmin && (
+        <section className="border-b border-border/70 bg-muted/40">
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
+            <p className="text-xs font-medium text-muted-foreground">
+              管理员：开启后可逐条编辑标题、正文与配图，内容保存在当前浏览器。
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant={editMode ? "default" : "outline"}
+                className="h-9 rounded-full font-semibold"
+                onClick={() => setEditMode((v) => !v)}
+              >
+                <PenLine className="mr-1 h-3.5 w-3.5" />
+                {editMode ? "完成编辑" : "编辑模式"}
+              </Button>
+              {editMode && (
+                <>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-9 rounded-full font-semibold"
+                    disabled={saving}
+                    onClick={async () => {
+                      const ok = await saveToServer();
+                      if (ok) toast.success("已保存并发布到服务器");
+                      else toast.error("保存失败，请确认服务器与 R2 可用");
+                    }}
                   >
-                    <span className="font-display text-[11px] font-black tabular-nums text-primary transition-colors group-hover:text-primary-foreground/70">
-                      {String(ci + 1).padStart(2, "0")}
-                    </span>
-                    {c.title}
-                    <span className="text-[11px] font-medium tabular-nums text-muted-foreground transition-colors group-hover:text-primary-foreground/70">
-                      {chapterCount(c)}
-                    </span>
-                  </a>
-                ))}
-              </nav>
+                    <Save className="mr-1 h-3.5 w-3.5" />
+                    {saving ? "保存中…" : "保存并发布"}
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-9 rounded-full"
+                    onClick={() => {
+                      if (confirm("确认清除本地编辑？恢复为当前线上/默认内容。")) reset();
+                    }}
+                  >
+                    恢复默认
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         </section>
+      )}
 
-        {/* Chapters */}
-        <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-          {chapters.map((chapter, ci) => (
-            <div key={chapter.id} id={`chapter-${chapter.id}`} className="scroll-mt-24">
-              <div className={`reveal ${ci > 0 ? "mt-16" : ""}`}>
-                <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-                  Chapter {String(ci + 1).padStart(2, "0")}
-                </p>
-                <h2 className="mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-4xl">
-                  {chapter.title}
-                </h2>
-                {chapter.intro && (
-                  <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base">
-                    {chapter.intro}
-                  </p>
-                )}
-              </div>
-
-              {chapter.groups.map((group, gi) => (
-                <div
-                  key={group.id}
-                  className={`reveal ${gi === 0 ? "mt-10" : "mt-9"} ${gi > 0 ? "reveal-delay-1" : ""}`}
+      <main className="reveal mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-start lg:gap-12">
+          {/* 目录 · 左侧栏 */}
+          <aside className="reveal lg:sticky lg:top-24">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              目录
+            </p>
+            <nav
+              aria-label="篇章导航"
+              className="mt-3 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
+            >
+              {chapters.map((c) => (
+                <a
+                  key={c.id}
+                  href={`#${c.id}`}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground transition-colors hover:border-primary hover:text-primary lg:rounded-lg lg:px-4 lg:py-2.5 lg:text-sm"
                 >
-                  <h3 className="text-sm font-bold uppercase tracking-[0.12em] text-foreground/60">
-                    {group.title}
-                  </h3>
-                  <div className="mt-3">
-                    {group.items.map((it) => (
+                  <span className="text-muted-foreground">{c.numeral}</span>
+                  {c.title}
+                </a>
+              ))}
+            </nav>
+          </aside>
+
+          {/* 篇章内容 */}
+          <div className="mt-10 lg:mt-0">
+            <div className="space-y-6">
+              {chapters.map((chapter, ci) => (
+                <section
+                  key={chapter.id}
+                  id={chapter.id}
+                  className="reveal scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10"
+                >
+                  <div className="flex items-center gap-2 text-xs font-medium text-primary">
+                    <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-2">
+                      {ci + 1}
+                    </span>
+                    <span className="uppercase tracking-wider">Chapter</span>
+                  </div>
+                  <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">
+                    <span className="text-muted-foreground">{chapter.numeral}、</span>
+                    {chapter.title}
+                  </h2>
+                  {chapter.intro && (
+                    <p className="mt-1 text-sm text-muted-foreground">{chapter.intro}</p>
+                  )}
+
+                  <ul className="mt-6 divide-y divide-border/60">
+                    {chapter.items.map((it) => (
                       <GuideRow
                         key={it.id}
                         item={it}
@@ -210,30 +206,30 @@ function QAPage() {
                         onRemoveImage={(idx) => removeImage(it.id, idx)}
                       />
                     ))}
-                  </div>
-                </div>
+                  </ul>
+                </section>
               ))}
             </div>
-          ))}
 
-          {/* CTA */}
-          <div className="reveal mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/70 pt-10 sm:flex-row sm:items-center">
-            <div>
-              <p className="text-lg font-black text-foreground">还有问题没被解答？</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                告诉我们，我们会把高频问题补充进新生指北。
-              </p>
+            {/* CTA */}
+            <div className="reveal mt-16 flex flex-col items-start justify-between gap-4 border-t border-border/70 pt-8 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-base font-semibold text-foreground">还有问题没被解答？</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  告诉我们，我们会把高频问题补充进新生指北。
+                </p>
+              </div>
+              <Link to="/feedback">
+                <Button className="rounded-full font-bold">
+                  去提交反馈
+                  <ArrowRight className="ml-1 h-4 w-4" />
+                </Button>
+              </Link>
             </div>
-            <Link
-              to="/feedback"
-              className="group inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-primary px-6 text-sm font-bold text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_26px_-10px_var(--color-moss)]"
-            >
-              去权益反馈提问
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </Link>
           </div>
-        </section>
+        </div>
       </main>
+
       <SiteFooter />
     </div>
   );
@@ -263,7 +259,7 @@ function GuideRow({
 
   if (editMode) {
     return (
-      <div className="reveal border-t border-border/70 py-4">
+      <li className="py-4">
         <div className="space-y-3">
           <Input
             value={item.title}
@@ -311,12 +307,12 @@ function GuideRow({
             <p className="text-[11px] text-muted-foreground">未填写内容，前台会显示「待补充」。</p>
           )}
         </div>
-      </div>
+      </li>
     );
   }
 
   return (
-    <div className="reveal border-t border-border/70">
+    <li>
       <button
         type="button"
         onClick={onToggle}
@@ -347,7 +343,17 @@ function GuideRow({
           <div className="pb-5">
             {hasContent ? (
               <>
-                <p className="text-sm leading-relaxed text-muted-foreground">{item.content}</p>
+                {item.content
+                  ?.split("\n\n")
+                  .filter((p) => p.trim())
+                  .map((paragraph, i) => (
+                    <p
+                      key={i}
+                      className="mt-3 text-sm leading-relaxed text-muted-foreground first:mt-0"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
                 {images.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {images.map((src, i) => (
@@ -397,6 +403,6 @@ function GuideRow({
           </div>
         </div>
       </div>
-    </div>
+    </li>
   );
 }

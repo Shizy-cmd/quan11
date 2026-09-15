@@ -1,270 +1,176 @@
 import { QA_ITEMS, type QAItem } from "@/lib/qaData";
 
+export type GuideSource = { title: string; url?: string };
+
 export type GuideItem = {
   id: string;
   title: string;
   content?: string;
   placeholder?: boolean;
-  sources?: { title: string; url?: string }[];
+  sources?: GuideSource[];
   images?: string[];
-};
-
-export type GuideGroup = {
-  id: string;
-  title: string;
-  items: GuideItem[];
 };
 
 export type GuideChapter = {
   id: string;
+  /** 中文序号，如「一」「二」，用于「一、HDUer 的第一颗纽扣」式标题与左侧目录。 */
+  numeral: string;
   title: string;
   intro?: string;
-  groups: GuideGroup[];
+  items: GuideItem[];
 };
 
 function placeholder(id: string, title: string): GuideItem {
   return { id, title, placeholder: true };
 }
 
-function item(id: string, title: string, qaId?: string): GuideItem {
-  const q = qaId ? QA_ITEMS.find((x) => x.id === qaId) : undefined;
-  if (q) {
-    return { id, title, content: q.fullAnswer, sources: q.sources };
-  }
-  return placeholder(id, title);
-}
+/**
+ * 一个单元 = 一条已审核问答（多条可合成一条，之间空行分段）。
+ * 找不到对应问答时保留「待补充」占位，绝不编造内容。
+ */
+function item(id: string, title: string, qaIds?: string | string[]): GuideItem {
+  const ids = typeof qaIds === "string" ? [qaIds] : (qaIds ?? []);
+  const answers = ids
+    .map((qaId) => QA_ITEMS.find((q) => q.id === qaId))
+    .filter((q): q is QAItem => Boolean(q));
 
-function qaToItem(q: QAItem): GuideItem {
+  if (answers.length === 0) return placeholder(id, title);
+
   return {
-    id: q.id,
-    title: q.question,
-    content: q.fullAnswer,
-    sources: q.sources,
+    id,
+    title,
+    content: answers.map((q) => q.fullAnswer).join("\n\n"),
+    sources: answers
+      .flatMap((q) => q.sources)
+      .filter((s, i, all) => all.findIndex((x) => x.title === s.title) === i),
   };
-}
-
-function faq(ids: string[]): GuideItem[] {
-  return ids
-    .map((id) => QA_ITEMS.find((q) => q.id === id))
-    .filter((q): q is QAItem => Boolean(q))
-    .map(qaToItem);
 }
 
 export const FRESHMAN_GUIDE: GuideChapter[] = [
   {
-    id: "preparation",
-    title: "开学准备篇",
-    intro: "报到前要办的事：账号绑定、钉钉报到、户口与医保，一条条打勾。",
-    groups: [
-      {
-        id: "prep-accounts",
-        title: "1. 杭电账号绑定",
-        items: [
-          item("prep-accounts-1", "1.1 学号班级号获取教程"),
-          item("prep-accounts-2", "1.2 智慧杭电"),
-          item("prep-accounts-3", "1.3 钉钉杭州电子科技大学认证"),
-          item("prep-accounts-4", "1.4 杭电助手认证流程"),
-          item("prep-accounts-5", "1.5 杭电后勤生活认证"),
-        ],
-      },
-      {
-        id: "prep-register",
-        title: "2. 钉钉新生报到模块",
-        items: [
-          item("prep-register-1", "2.1 完成指南"),
-          item("prep-register-2", "2.2 安全教育"),
-          item("prep-register-3", "2.3 入学登记"),
-          item("prep-register-4", "2.4 手机选号"),
-          item("prep-register-5", "2.5 学费缴纳"),
-          item("prep-register-6", "2.6 报到码"),
-        ],
-      },
-      {
-        id: "prep-hukou",
-        title: "3. 户口迁移（非必须）",
-        items: [item("prep-hukou-1", "户口迁移办理说明")],
-      },
-      {
-        id: "prep-arrival",
-        title: "4. 杭电到达篇",
-        items: [item("prep-arrival-1", "地铁优惠", "arrival-transport")],
-      },
-      {
-        id: "prep-insurance",
-        title: "5. 大学生医保缴纳",
-        items: [item("prep-insurance-1", "大学生医保缴纳说明")],
-      },
-      {
-        id: "prep-faq",
-        title: "报到常见问题",
-        items: faq([
-          "campus-assignment",
-          "registration-flow",
-          "registration-materials",
-          "living-supplies",
-          "arrival-transport",
-          "military-training",
-          "first-week",
-        ]),
-      },
+    id: "first-button",
+    numeral: "一",
+    title: "HDUer 的第一颗纽扣",
+    intro: "报到前先把账号、认证和入学手续办妥——这是成为 HDUer 的第一颗纽扣。",
+    items: [
+      item("first-button-1", "1.1 数字杭电平台激活"),
+      item("first-button-2", "1.2 支付宝和微信校园身份认证"),
+      item("first-button-3", "1.3 钉钉学校组织认证"),
+      item("first-button-4", "1.4 账号与信息安全"),
+      item("first-button-5", "1.5 团组织关系及户口迁移"),
+      item("first-button-6", "1.6 入学体检"),
     ],
   },
   {
-    id: "dorm",
-    title: "宿舍篇",
-    intro: "寝室怎么分、怎么住、怎么缴费，宿舍生活的问题都在这里。",
-    groups: [
-      {
-        id: "dorm-basic",
-        title: "1. 寝室基础介绍",
-        items: [
-          item("dorm-basic-1", "1.1 宿舍位置"),
-          item("dorm-basic-2", "1.2 宿舍类型", "dorm-rooms"),
-          item("dorm-basic-3", "1.3 宿舍环境"),
-          item("dorm-basic-4", "1.4 宿舍宽带"),
-          item("dorm-basic-5", "1.5 新生入住好物推荐", "living-supplies"),
-        ],
-      },
-      {
-        id: "dorm-fee",
-        title: "2. 寝室费用说明",
-        items: [item("dorm-fee-1", "寝室费用说明")],
-      },
-      {
-        id: "dorm-life",
-        title: "3. 寝室生活介绍",
-        items: [item("dorm-life-1", "3.1 规章制度", "dorm-utilities")],
-      },
-      {
-        id: "dorm-contact",
-        title: "4. 常用联系方式（需补充）",
-        items: [item("dorm-contact-1", "常用联系方式")],
-      },
-      {
-        id: "dorm-faq",
-        title: "宿舍常见问题",
-        items: faq([
-          "dorm-rooms",
-          "dorm-assignment",
-          "dorm-utilities",
-          "campus-card",
-          "lights-out",
-        ]),
-      },
+    id: "live",
+    numeral: "二",
+    title: "住在杭电",
+    intro: "宿舍怎么分、屋里有什么、水电网络怎么用，住得舒服才学得踏实。",
+    items: [
+      item("live-1", "2.1 宿舍类型与床位尺寸", "dorm-rooms"),
+      item("live-2", "2.2 宿舍设施与费用"),
+      item("live-3", "2.3 热水、洗衣、空调和宽带", "dorm-utilities"),
+      item("live-4", "2.4 入住物品准备", "living-supplies"),
+      item("live-5", "2.5 报修与生活服务"),
     ],
   },
   {
-    id: "life",
-    title: "生活篇",
-    intro: "地图、食堂、快递、自习、健身，把校园生活过明白。",
-    groups: [
-      {
-        id: "life-map",
-        title: "1. 地图篇",
-        items: [
-          placeholder("life-map-1", "1.1 平面地图"),
-          placeholder("life-map-2", "1.2 全景地图"),
-        ],
-      },
-      {
-        id: "life-area",
-        title: "2. 生活区篇",
-        items: [
-          item("life-area-1", "2.1 食堂干饭", "canteen"),
-          item("life-area-2", "2.2 超市购物"),
-          item("life-area-3", "2.3 快递收发", "express-address"),
-          item("life-area-4", "2.4 自习佳处"),
-          item("life-area-5", "2.5 健身沉淀"),
-        ],
-      },
-      {
-        id: "life-teaching",
-        title: "3. 教学区篇",
-        items: [
-          item("life-teaching-1", "3.1 宝藏图书馆"),
-          item("life-teaching-2", "3.2 教学楼寻址"),
-          item("life-teaching-3", "3.3 活力体育场"),
-          item("life-teaching-4", "3.4 月雅湖留声"),
-        ],
-      },
-      {
-        id: "life-faq",
-        title: "生活常见问题",
-        items: faq(["canteen", "campus-life", "express-address"]),
-      },
+    id: "study",
+    numeral: "三",
+    title: "学在杭电",
+    intro: "课表、选课、图书馆、自习与成绩，学业上的关键节点先弄清楚。",
+    items: [
+      item("study-1", "3.1 课表、选课与教学系统", "course-selection"),
+      item("study-2", "3.2 图书馆使用"),
+      item("study-3", "3.3 教学楼与自习空间"),
+      item("study-4", "3.4 考试成绩与学业提醒"),
+      item("study-5", "3.5 奖助学金与绿色通道", "scholarship-loans"),
     ],
   },
   {
-    id: "aid",
-    title: "助学政策篇",
-    intro: "勤工助学、助学贷款、奖助学金，官方文件与申请渠道。",
-    groups: [
-      {
-        id: "aid-channel",
-        title: "1. 信息渠道",
-        items: [item("aid-channel-1", "官方信息渠道")],
-      },
-      {
-        id: "aid-policy",
-        title: "2. 助学政策",
-        items: [
-          item("aid-policy-1", "2.1 勤工助学"),
-          item("aid-policy-2", "2.2 助学贷款"),
-          item("aid-policy-3", "2.3 国家助学贷款"),
-          item("aid-policy-4", "2.4 助学金、补助"),
-          item("aid-policy-5", "2.5 奖学金", "scholarship-loans"),
-          item("aid-policy-6", "2.6 学杂费缴费方式"),
-        ],
-      },
-      {
-        id: "aid-faq",
-        title: "资助常见问题",
-        items: faq(["scholarship-loans"]),
-      },
-    ],
+    id: "eat",
+    numeral: "四",
+    title: "吃在杭电",
+    intro: "食堂在哪、怎么付钱，每天三顿的小事也别踩坑。",
+    items: [item("eat-1", "4.1 食堂分布", "canteen"), item("eat-2", "4.2 校园支付", "campus-card")],
   },
   {
-    id: "academic",
-    title: "其他高频问题",
-    intro: "选课、转专业、体育、竞赛与安全，新生最常问的补充问题。",
-    groups: [
-      {
-        id: "academic-course",
-        title: "课程与学业",
-        items: faq([
-          "course-selection",
-          "transfer-conditions",
-          "transfer-process",
-          "pe-courses",
-          "devices-textbooks",
-        ]),
-      },
-      {
-        id: "academic-growth",
-        title: "发展与安全",
-        items: faq(["competition-research", "scam-safety", "one-advice"]),
-      },
+    id: "travel",
+    numeral: "五",
+    title: "行在杭电",
+    intro: "校区地址、报到交通、校内通行、公交地铁与快递收发。",
+    items: [
+      item("travel-1", "5.1 校区地址", "campus-assignment"),
+      item("travel-2", "5.2 报到交通", "arrival-transport"),
+      item("travel-3", "5.3 校园内通行", "campus-life"),
+      item("travel-4", "5.4 公交地铁"),
+      item("travel-5", "5.5 快递收发", "express-address"),
     ],
   },
   {
     id: "appendix",
+    numeral: "六",
     title: "附录",
-    intro: "校历、联系方式与实用速查。",
-    groups: [
-      {
-        id: "appendix-list",
-        title: "附录",
-        items: [
-          item("appendix-calendar", "校历"),
-          item("appendix-counselor", "辅导员联系方式和钉钉群聊"),
-          item("appendix-career", "毕业生就业指南"),
-          item("appendix-bed-size", "五人寝尺寸"),
-        ],
-      },
+    intro: "材料清单、地图校历、安全与医保、运动和最后一句叮嘱。",
+    items: [
+      item("appendix-1", "6.1 报到材料清单", "registration-materials"),
+      item("appendix-2", "6.2 校园地图与校历"),
+      item("appendix-3", "6.3 新生安全教育", "scam-safety"),
+      item("appendix-4", "6.4 大学生医保缴纳"),
+      item("appendix-5", "6.5 运动健身", "pe-courses"),
+      item("appendix-6", "6.6 校园生活地图速览"),
+      item("appendix-7", "6.7 写在最后", "one-advice"),
     ],
   },
 ];
 
-export function chapterCount(chapter: GuideChapter) {
-  return chapter.groups.reduce((n, g) => n + g.items.length, 0);
+export function guideItemCount(chapters: GuideChapter[]) {
+  return chapters.reduce((n, c) => n + c.items.length, 0);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
+}
+
+function normalizeItems(raw: unknown): GuideItem[] {
+  if (!Array.isArray(raw)) return [];
+  const items: GuideItem[] = [];
+  for (const entry of raw) {
+    if (!isRecord(entry) || typeof entry.title !== "string" || entry.title.trim() === "") continue;
+    const content = typeof entry.content === "string" ? entry.content : undefined;
+    items.push({
+      id: typeof entry.id === "string" && entry.id ? entry.id : `item-${items.length + 1}`,
+      title: entry.title,
+      content,
+      placeholder: !content,
+      sources: Array.isArray(entry.sources) ? (entry.sources as GuideSource[]) : undefined,
+      images: Array.isArray(entry.images) ? (entry.images as string[]) : undefined,
+    });
+  }
+  return items;
+}
+
+/**
+ * 校验 R2 上保存的章节数据。
+ * 目录已改为「章 → 单元」两层；旧版「章 → 分组 → 条目」的存档无法映射到新框架，
+ * 这种情况返回 null，由调用方回退到内置的最新目录。
+ */
+export function normalizeChapters(raw: unknown): GuideChapter[] | null {
+  if (!Array.isArray(raw) || raw.length === 0) return null;
+
+  const chapters: GuideChapter[] = [];
+  for (const [index, entry] of raw.entries()) {
+    if (!isRecord(entry) || !Array.isArray(entry.items)) return null;
+    const title = typeof entry.title === "string" ? entry.title.trim() : "";
+    if (!title) return null;
+    chapters.push({
+      id: typeof entry.id === "string" && entry.id ? entry.id : `chapter-${index + 1}`,
+      numeral: typeof entry.numeral === "string" ? entry.numeral : String(index + 1),
+      title,
+      intro: typeof entry.intro === "string" ? entry.intro : undefined,
+      items: normalizeItems(entry.items),
+    });
+  }
+
+  return chapters.length > 0 ? chapters : null;
 }
