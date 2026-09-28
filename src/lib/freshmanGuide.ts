@@ -1,13 +1,10 @@
 import { QA_ITEMS, type QAItem } from "@/lib/qaData";
 
-export type GuideSource = { title: string; url?: string };
-
 export type GuideItem = {
   id: string;
   title: string;
   content?: string;
   placeholder?: boolean;
-  sources?: GuideSource[];
   images?: string[];
 };
 
@@ -140,7 +137,6 @@ function normalizeItems(raw: unknown): GuideItem[] {
       title: entry.title,
       content,
       placeholder: !content,
-      sources: Array.isArray(entry.sources) ? (entry.sources as GuideSource[]) : undefined,
       images: Array.isArray(entry.images) ? (entry.images as string[]) : undefined,
     });
   }
