@@ -224,105 +224,111 @@ function SectionBlock({
   const hasMap = section.kind === "map" && Boolean(section.imageUrl);
 
   return (
-    <section
-      id={section.id}
-      className={`reveal scroll-mt-28 rounded-md border bg-card transition-colors ${
-        open ? "border-primary/40" : "border-border hover:border-primary/30"
-      }`}
-    >
-      <div className="flex items-start justify-between gap-4 p-4 sm:p-6">
-        <h2 className="min-w-0 flex-1 text-xl font-bold text-foreground sm:text-2xl">
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-expanded={open}
-            className="group flex w-full items-start gap-4 text-left"
-          >
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 text-xs font-medium text-primary">
-                <span
-                  className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[11px] font-bold transition-colors ${
-                    open ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
-                  }`}
-                >
-                  {index}
-                </span>
-                <span className="tracking-[0.2em]">板块</span>
-              </div>
-              <span className="mt-2 block text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
-                {section.title}
-              </span>
-              {section.desc && (
-                <span className="mt-1 block text-sm font-normal text-muted-foreground">
-                  {section.desc}
-                </span>
-              )}
-            </div>
-            <span
-              aria-hidden="true"
-              className={`mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors ${
-                open
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-secondary text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
-              }`}
-            >
-              <ChevronDown
-                className={`h-5 w-5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
-              />
-            </span>
-          </button>
-        </h2>
-        {isAdmin && <AdminUpload channel={section.id} onDone={onChanged} />}
-      </div>
-
-      <div
-        className={`grid transition-all duration-300 ease-out ${
-          open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+    // 滚动渐显用的 .reveal 必须放在 className 固定不变的外层元素上：
+    // is-visible 类由 IntersectionObserver 直接写入 DOM，如果 React 之后因为
+    // open 状态变化重写同一个元素的 class，写入的 is-visible 会被覆盖掉，
+    // 展开后的板块就会停在 opacity:0（和新生指北保持同样的结构）。
+    <div className="reveal">
+      <section
+        id={section.id}
+        className={`scroll-mt-28 rounded-md border bg-card transition-colors ${
+          open ? "border-primary/40" : "border-border hover:border-primary/30"
         }`}
       >
-        <div className="overflow-hidden">
-          <div className="px-4 pb-4 sm:px-6 sm:pb-6">
-            {hasMap ? (
-              <div className="overflow-hidden">
-                <img
-                  src={section.imageUrl}
-                  alt="杭州电子科技大学校园地图"
-                  className="w-full object-contain"
+        <div className="flex items-start justify-between gap-4 p-4 sm:p-6">
+          <h2 className="min-w-0 flex-1 text-xl font-bold text-foreground sm:text-2xl">
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-expanded={open}
+              className="group flex w-full items-start gap-4 text-left"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 text-xs font-medium text-primary">
+                  <span
+                    className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[11px] font-bold transition-colors ${
+                      open ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                    }`}
+                  >
+                    {index}
+                  </span>
+                  <span className="tracking-[0.2em]">板块</span>
+                </div>
+                <span className="mt-2 block text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
+                  {section.title}
+                </span>
+                {section.desc && (
+                  <span className="mt-1 block text-sm font-normal text-muted-foreground">
+                    {section.desc}
+                  </span>
+                )}
+              </div>
+              <span
+                aria-hidden="true"
+                className={`mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors ${
+                  open
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
+                }`}
+              >
+                <ChevronDown
+                  className={`h-5 w-5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
                 />
-              </div>
-            ) : null}
+              </span>
+            </button>
+          </h2>
+          {isAdmin && <AdminUpload channel={section.id} onDone={onChanged} />}
+        </div>
 
-            {uploads.length > 0 ? (
-              <ul className="divide-y divide-border/60">
-                {uploads.map((f) => (
-                  <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
-                ))}
-              </ul>
-            ) : loadingFiles ? (
-              <p className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border bg-background px-4 py-6 text-sm text-muted-foreground">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                文件加载中…
-              </p>
-            ) : filesError ? (
-              <div className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
-                <p>文件列表加载失败，请检查网络后重试。</p>
-                <button
-                  type="button"
-                  onClick={onRetry}
-                  className="mt-3 inline-flex h-8 items-center rounded-md border border-input bg-card px-4 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-                >
-                  重新加载
-                </button>
-              </div>
-            ) : !hasMap ? (
-              <p className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
-                该板块暂无上传文件
-              </p>
-            ) : null}
+        <div
+          className={`grid transition-all duration-300 ease-out ${
+            open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            <div className="px-4 pb-4 sm:px-6 sm:pb-6">
+              {hasMap ? (
+                <div className="overflow-hidden">
+                  <img
+                    src={section.imageUrl}
+                    alt="杭州电子科技大学校园地图"
+                    className="w-full object-contain"
+                  />
+                </div>
+              ) : null}
+
+              {uploads.length > 0 ? (
+                <ul className="divide-y divide-border/60">
+                  {uploads.map((f) => (
+                    <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
+                  ))}
+                </ul>
+              ) : loadingFiles ? (
+                <p className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border bg-background px-4 py-6 text-sm text-muted-foreground">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  文件加载中…
+                </p>
+              ) : filesError ? (
+                <div className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+                  <p>文件列表加载失败，请检查网络后重试。</p>
+                  <button
+                    type="button"
+                    onClick={onRetry}
+                    className="mt-3 inline-flex h-8 items-center rounded-md border border-input bg-card px-4 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                  >
+                    重新加载
+                  </button>
+                </div>
+              ) : !hasMap ? (
+                <p className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+                  该板块暂无上传文件
+                </p>
+              ) : null}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
 
