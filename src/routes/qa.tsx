@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ChevronRight,
-  ChevronDown,
-  ExternalLink,
-  ArrowRight,
-  PenLine,
-  Plus,
-  X,
-  Save,
-} from "lucide-react";
+import { ChevronRight, ChevronDown, ArrowRight, PenLine, Plus, X, Save } from "lucide-react";
 import { toast } from "sonner";
 import type { GuideItem } from "@/lib/freshmanGuide";
 import { useGuideData } from "@/lib/useGuide";
@@ -384,34 +375,6 @@ function GuideRow({
                         className="w-full rounded-md object-cover sm:max-h-72"
                       />
                     ))}
-                  </div>
-                )}
-                {item.sources && item.sources.length > 0 && (
-                  <div className="mt-3 flex flex-wrap items-center gap-2">
-                    <span className="text-xs font-semibold tracking-wide text-muted-foreground">
-                      来源：
-                    </span>
-                    {item.sources.map((src) =>
-                      src.url ? (
-                        <a
-                          key={`${src.title}-${src.url}`}
-                          href={src.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground transition-colors hover:bg-primary/15 hover:text-primary"
-                        >
-                          {src.title}
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                      ) : (
-                        <span
-                          key={src.title}
-                          className="inline-flex items-center rounded-full bg-secondary px-3 py-1 text-xs font-medium text-foreground"
-                        >
-                          {src.title}
-                        </span>
-                      ),
-                    )}
                   </div>
                 )}
               </>

@@ -40,9 +40,6 @@ function item(id: string, title: string, qaIds?: string | string[]): GuideItem {
     id,
     title,
     content: answers.map((q) => q.fullAnswer).join("\n\n"),
-    sources: answers
-      .flatMap((q) => q.sources)
-      .filter((s, i, all) => all.findIndex((x) => x.title === s.title) === i),
   };
 }
 
