@@ -151,7 +151,7 @@ function FeedbackPage() {
             <p className="reveal text-xs font-bold tracking-[0.28em] text-primary">
               FEEDBACK · 权益反馈
             </p>
-            <h1 className="reveal reveal-delay-1 mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+            <h1 className="reveal reveal-delay-1 mt-3 font-display text-3xl font-bold text-foreground sm:text-5xl">
               有问题，就来这里反馈
             </h1>
             <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm leading-relaxed text-muted-foreground">
@@ -301,7 +301,7 @@ function FeedbackPage() {
                 <Button
                   type="submit"
                   disabled={!canSubmit || submitting}
-                  className="h-11 rounded-full px-8 text-sm font-bold"
+                  className="h-11 px-8 text-sm font-bold"
                 >
                   {submitting ? "提交中…" : "提交反馈"}
                 </Button>
@@ -372,17 +372,12 @@ function SuccessCard({ ticket, onReset }: { ticket: string; onReset: () => void 
         请妥善保存问题单号，工作人员将在 2 个工作日内与你联系跟进。
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Button
-          type="button"
-          variant="outline"
-          className="h-11 rounded-full px-6"
-          onClick={onReset}
-        >
+        <Button type="button" variant="outline" className="h-11 px-6" onClick={onReset}>
           再提交一条
         </Button>
         <a
           href="/"
-          className="inline-flex h-11 items-center justify-center rounded-full bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+          className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           返回首页
         </a>

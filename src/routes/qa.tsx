@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ChevronRight, ExternalLink, ArrowRight, PenLine, Plus, X, Save } from "lucide-react";
+import {
+  ChevronRight,
+  ChevronDown,
+  ExternalLink,
+  ArrowRight,
+  PenLine,
+  Plus,
+  X,
+  Save,
+} from "lucide-react";
 import { toast } from "sonner";
-import { guideItemCount, type GuideItem } from "@/lib/freshmanGuide";
+import type { GuideItem } from "@/lib/freshmanGuide";
 import { useGuideData } from "@/lib/useGuide";
 import { useAuth } from "@/lib/auth";
 import { SiteHeader } from "@/components/home/SiteHeader";
@@ -66,7 +75,6 @@ function QAPage() {
   const [editMode, setEditMode] = useState(false);
 
   const toggle = (id: string) => setOpenId((cur) => (cur === id ? null : id));
-  const totalItems = guideItemCount(chapters);
 
   return (
     <div ref={ref} className="min-h-screen bg-background">
@@ -82,12 +90,11 @@ function QAPage() {
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-foreground">新生指北</span>
           </div>
-          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-bold text-foreground sm:text-5xl">
             新生指北
           </h1>
           <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
-            {chapters.length} 个篇章、{totalItems} 个单元，从报到前的第一颗纽扣到校园日常，
-            由学长学姐整理并人工审核。
+            从报到前的第一颗纽扣，到校园里的每一处日常——六大篇章，陪你走好大学第一步。
           </p>
         </div>
       </section>
@@ -103,7 +110,7 @@ function QAPage() {
               <Button
                 size="sm"
                 variant={editMode ? "default" : "outline"}
-                className="h-9 rounded-full font-semibold"
+                className="h-9 font-semibold"
                 onClick={() => setEditMode((v) => !v)}
               >
                 <PenLine className="mr-1 h-3.5 w-3.5" />
@@ -114,7 +121,7 @@ function QAPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-9 rounded-full font-semibold"
+                    className="h-9 font-semibold"
                     disabled={saving}
                     onClick={async () => {
                       const ok = await saveToServer();
@@ -145,10 +152,8 @@ function QAPage() {
       <main className="reveal mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-start lg:gap-12">
           {/* 目录 · 左侧栏 */}
-          <aside className="reveal lg:sticky lg:top-24">
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              目录
-            </p>
+          <aside className="reveal lg:sticky lg:top-28">
+            <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground">目录</p>
             <nav
               aria-label="篇章导航"
               className="mt-3 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0"
@@ -173,13 +178,13 @@ function QAPage() {
                 <section
                   key={chapter.id}
                   id={chapter.id}
-                  className="reveal scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10"
+                  className="reveal scroll-mt-28 border-t border-border/70 pt-8 sm:pt-10"
                 >
                   <div className="flex items-center gap-2 text-xs font-medium text-primary">
                     <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-2">
                       {ci + 1}
                     </span>
-                    <span className="uppercase tracking-wider">Chapter</span>
+                    <span className="tracking-[0.2em]">篇章</span>
                   </div>
                   <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl">
                     <span className="text-muted-foreground">{chapter.numeral}、</span>
@@ -189,7 +194,7 @@ function QAPage() {
                     <p className="mt-1 text-sm text-muted-foreground">{chapter.intro}</p>
                   )}
 
-                  <ul className="mt-6 divide-y divide-border/60">
+                  <ul className="mt-6 space-y-3">
                     {chapter.items.map((it) => (
                       <GuideRow
                         key={it.id}
@@ -220,7 +225,7 @@ function QAPage() {
                 </p>
               </div>
               <Link to="/feedback">
-                <Button className="rounded-full font-bold">
+                <Button className="font-bold">
                   去提交反馈
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -259,7 +264,7 @@ function GuideRow({
 
   if (editMode) {
     return (
-      <li className="py-4">
+      <li className="rounded-md border border-primary/30 bg-card p-4">
         <div className="space-y-3">
           <Input
             value={item.title}
@@ -312,12 +317,16 @@ function GuideRow({
   }
 
   return (
-    <li>
+    <li
+      className={`overflow-hidden rounded-md border bg-card transition-colors ${
+        open ? "border-primary/40" : "border-border hover:border-primary/30"
+      }`}
+    >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className="group flex w-full items-center gap-4 py-4 text-left"
+        className="group flex w-full items-center gap-4 px-4 py-3.5 text-left sm:px-5"
       >
         <span className="min-w-0 flex-1 text-base font-semibold text-foreground transition-colors group-hover:text-primary">
           {item.title}
@@ -327,11 +336,18 @@ function GuideRow({
             待补充
           </span>
         )}
-        <ChevronRight
-          className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-300 ${
-            open ? "rotate-90 text-foreground" : ""
+        <span
+          aria-hidden="true"
+          className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors ${
+            open
+              ? "bg-primary text-primary-foreground"
+              : "bg-secondary text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
           }`}
-        />
+        >
+          <ChevronDown
+            className={`h-4 w-4 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+          />
+        </span>
       </button>
 
       <div
@@ -340,7 +356,7 @@ function GuideRow({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="pb-5">
+          <div className="px-4 pb-4 sm:px-5 sm:pb-5">
             {hasContent ? (
               <>
                 {item.content

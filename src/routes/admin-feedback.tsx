@@ -207,11 +207,7 @@ function AdminFeedbackPage() {
                 className="h-11"
               />
             </div>
-            <Button
-              type="submit"
-              disabled={!pwd.trim() || logggingIn}
-              className="mt-5 h-11 w-full rounded-full"
-            >
+            <Button type="submit" disabled={!pwd.trim() || logggingIn} className="mt-5 h-11 w-full">
               {logggingIn ? "登录中…" : "登录"}
             </Button>
           </form>
@@ -227,8 +223,8 @@ function AdminFeedbackPage() {
       <main className="flex-1">
         <section className="border-b border-border/70">
           <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-12">
-            <p className="text-xs font-bold tracking-[0.28em] text-primary">ADMIN · 反馈管理</p>
-            <h1 className="mt-3 font-display text-3xl font-black tracking-tight text-foreground sm:text-4xl">
+            <p className="text-xs font-bold tracking-[0.28em] text-primary">管理后台 · 反馈管理</p>
+            <h1 className="mt-3 font-display text-3xl font-bold text-foreground sm:text-4xl">
               权益反馈后台
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
@@ -369,7 +365,7 @@ function VisitStatsSection({
       value: stats?.totalPageviews ?? 0,
       note: "统计开启以来累计页面浏览",
       theme: "bg-primary text-primary-foreground border-transparent",
-      accent: "text-accent",
+      accent: "text-brand-gold",
     },
     {
       label: "独立访客",
@@ -402,8 +398,8 @@ function VisitStatsSection({
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <p className="text-xs font-bold tracking-[0.28em] text-primary">VISITS · 访问统计</p>
-            <h2 className="mt-2 font-display text-2xl font-black tracking-tight text-foreground sm:text-3xl">
+            <p className="text-xs font-bold tracking-[0.28em] text-primary">访问统计</p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-foreground sm:text-3xl">
               浏览访问人数
             </h2>
           </div>
@@ -416,7 +412,7 @@ function VisitStatsSection({
             <Button
               variant="outline"
               size="sm"
-              className="h-9 rounded-full"
+              className="h-9"
               onClick={() => void load()}
               disabled={loading}
             >
@@ -452,9 +448,7 @@ function VisitStatsSection({
                   key={b.label}
                   className={`flex min-h-32 flex-col justify-between gap-6 rounded-sm border p-6 ${b.theme}`}
                 >
-                  <p
-                    className={`font-display text-4xl font-black leading-none tracking-tight ${b.accent}`}
-                  >
+                  <p className={`font-display text-4xl font-bold leading-none ${b.accent}`}>
                     {b.value.toLocaleString("zh-CN")}
                   </p>
                   <div>

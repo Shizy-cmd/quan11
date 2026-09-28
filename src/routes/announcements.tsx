@@ -117,12 +117,12 @@ function AnnouncementsPage() {
               <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                 <Megaphone className="h-5 w-5" />
               </span>
-              <h1 className="font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+              <h1 className="font-display text-3xl font-bold text-foreground sm:text-5xl">
                 权益公告
               </h1>
             </div>
             {isAdmin && (
-              <Button onClick={() => setShowComposer(true)} className="rounded-full font-bold">
+              <Button onClick={() => setShowComposer(true)} className="font-bold">
                 <Plus className="mr-1 h-4 w-4" />
                 发布公告
               </Button>
@@ -145,7 +145,7 @@ function AnnouncementsPage() {
                 className="border-0 shadow-none focus-visible:ring-0"
               />
             </div>
-            <Button type="submit" className="rounded-full font-bold">
+            <Button type="submit" className="font-bold">
               搜索
             </Button>
           </form>
@@ -289,7 +289,7 @@ function AnnouncementsPage() {
                           {labelOf(a.category)}
                         </span>
                         {a.pinned && (
-                          <span className="inline-flex items-center gap-1 rounded-full bg-accent/60 px-2 py-0.5 font-medium text-accent-foreground">
+                          <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 font-medium text-accent-foreground">
                             <Pin className="h-3 w-3" />
                             置顶
                           </span>
@@ -405,7 +405,7 @@ function DetailDialog({ item, onClose }: { item: Announcement; onClose: () => vo
             {labelOf(item.category)}
           </span>
           {item.pinned && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-accent/60 px-2 py-0.5 font-medium text-accent-foreground">
+            <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 font-medium text-accent-foreground">
               <Pin className="h-3 w-3" />
               置顶
             </span>
@@ -579,7 +579,9 @@ function ComposerDialog({
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">封面图（选填）</label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">
+                封面图（选填）
+              </label>
               <input
                 type="file"
                 accept="image/*"
@@ -588,13 +590,13 @@ function ComposerDialog({
               />
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-medium text-foreground">附件（选填，可多选）</label>
+              <label className="mb-1.5 block text-xs font-medium text-foreground">
+                附件（选填，可多选）
+              </label>
               <input
                 type="file"
                 multiple
-                onChange={(e) =>
-                  setAttachments(Array.from(e.target.files ?? []).slice(0, 10))
-                }
+                onChange={(e) => setAttachments(Array.from(e.target.files ?? []).slice(0, 10))}
                 className="block w-full rounded-md border border-input bg-background px-3 py-2 text-xs text-foreground file:mr-2 file:rounded-md file:border-0 file:bg-primary/10 file:px-3 file:py-1 file:text-xs file:font-medium file:text-primary"
               />
             </div>

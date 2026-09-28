@@ -14,9 +14,11 @@ const FEATURED_IDS = [
 
 const BLOCK_STYLES = [
   "bg-primary text-primary-foreground",
-  "bg-sage text-foreground",
-  "bg-secondary text-foreground",
-  "bg-card text-foreground",
+  "bg-brand-red text-white",
+  "bg-brand-gold text-primary",
+  "bg-brand-cyan text-primary",
+  "bg-brand-purple text-white",
+  "bg-primary text-primary-foreground",
 ] as const;
 
 export function GuideTeaser() {
@@ -30,7 +32,7 @@ export function GuideTeaser() {
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
         <div className="reveal grid gap-6 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
-            <h2 className="font-display text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+            <h2 className="font-display text-4xl font-bold text-foreground sm:text-5xl">
               校园指南
             </h2>
             <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
@@ -54,12 +56,12 @@ export function GuideTeaser() {
                 key={s.id}
                 to="/guide"
                 hash={s.id}
-                className={`group flex aspect-[4/3] flex-col items-center justify-center gap-2 rounded-[3px] px-4 text-center transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${style}`}
+                className={`group flex aspect-[4/3] flex-col items-center justify-center gap-3 rounded-[4px] px-5 text-center transition-transform duration-300 hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${style}`}
               >
-                <span className="font-display text-lg font-black leading-tight sm:text-xl">
+                <span className="font-display text-2xl font-bold leading-tight sm:text-[1.75rem]">
                   {s.title}
                 </span>
-                {s.desc && <span className="text-xs leading-relaxed opacity-75">{s.desc}</span>}
+                {s.desc && <span className="text-sm leading-relaxed opacity-85">{s.desc}</span>}
               </Link>
             );
           })}

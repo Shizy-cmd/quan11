@@ -41,10 +41,11 @@ export function ServiceGrid() {
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
         <div className="reveal grid gap-6 md:grid-cols-12 md:items-end">
           <div className="md:col-span-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              What we do
+            <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.3em] text-primary">
+              <span aria-hidden="true" className="inline-block h-3.5 w-1 bg-accent" />
+              服务职能
             </p>
-            <h2 className="mt-4 font-display text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-bold text-foreground sm:text-5xl">
               一站式校园权益服务
             </h2>
           </div>
@@ -65,14 +66,14 @@ export function ServiceGrid() {
                   to={s.href as "/feedback"}
                   className="group flex items-center gap-5 py-8 transition-colors sm:gap-8"
                 >
-                  <span className="w-14 shrink-0 font-display text-4xl font-black leading-none text-foreground/15 transition-colors duration-300 group-hover:text-primary sm:w-20 sm:text-5xl">
+                  <span className="w-14 shrink-0 font-display text-4xl font-bold leading-none text-foreground/20 transition-colors duration-300 group-hover:text-primary sm:w-20 sm:text-5xl">
                     {s.no}
                   </span>
                   <span className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-secondary text-foreground transition-colors duration-300 group-hover:bg-primary group-hover:text-primary-foreground sm:flex">
                     <Icon className="h-4.5 w-4.5" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block text-xl font-black tracking-tight text-foreground transition-colors group-hover:text-primary sm:text-2xl">
+                    <span className="block text-xl font-bold tracking-wide text-foreground transition-colors group-hover:text-primary sm:text-2xl">
                       {s.title}
                     </span>
                     <span className="mt-1.5 block max-w-xl text-sm leading-relaxed text-muted-foreground">

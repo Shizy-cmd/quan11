@@ -18,10 +18,11 @@ export function AnnouncementsSection() {
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 md:py-28">
         <div className="reveal grid gap-6 md:grid-cols-12 md:items-end">
           <div className="md:col-span-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              News
+            <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.3em] text-primary">
+              <span aria-hidden="true" className="inline-block h-3.5 w-1 bg-accent" />
+              工作动态
             </p>
-            <h2 className="mt-4 font-display text-4xl font-black tracking-tight text-foreground sm:text-5xl">
+            <h2 className="mt-4 font-display text-4xl font-bold text-foreground sm:text-5xl">
               近期权益动态
             </h2>
           </div>
@@ -54,7 +55,7 @@ export function AnnouncementsSection() {
                   i > 0 ? "border-t border-border/70" : ""
                 }`}
               >
-                <span className="hidden w-10 shrink-0 font-display text-xl font-black leading-none text-foreground/20 transition-colors group-hover:text-primary sm:block">
+                <span className="hidden w-10 shrink-0 font-display text-xl font-bold leading-none text-foreground/25 transition-colors group-hover:text-primary sm:block">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 {n.cover && (

@@ -19,17 +19,15 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
-        <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
-        </p>
+        <h1 className="font-display text-7xl font-bold text-primary">404</h1>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">页面不存在</h2>
+        <p className="mt-2 text-sm text-muted-foreground">你访问的页面不存在或已被移动。</p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Go home
+            返回首页
           </Link>
         </div>
       </div>
@@ -44,11 +42,9 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
-        </h1>
+        <h1 className="text-xl font-semibold tracking-tight text-foreground">页面加载失败</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          服务暂时出了点问题，你可以刷新重试或返回首页。
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -58,13 +54,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Try again
+            重试
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
+            className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
           >
-            Go home
+            返回首页
           </a>
         </div>
       </div>
@@ -77,26 +73,26 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "学生权益中心 | 全心权益，全意为你" },
+      { title: "学生权益中心 | 杭州电子科技大学校学生会" },
       {
         name: "description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
+          "杭州电子科技大学校学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。让优秀成为一种习惯。",
       },
-      { name: "author", content: "学生权益中心" },
-      { property: "og:title", content: "学生权益中心 | 全心权益，全意为你" },
+      { name: "author", content: "杭州电子科技大学校学生会学生权益中心" },
+      { property: "og:title", content: "学生权益中心 | 杭州电子科技大学校学生会" },
       {
         property: "og:description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
+          "校学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "学生权益中心 | 全心权益，全意为你" },
+      { name: "twitter:title", content: "学生权益中心 | 杭州电子科技大学校学生会" },
       {
         name: "twitter:description",
         content:
-          "学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
+          "校学生会学生权益中心官方服务平台：权益反馈、新生指北、校园指南、权益公告，一站完成。",
       },
     ],
     links: [
@@ -109,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@700;900&family=Ma+Shan+Zheng&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&display=swap",
       },
     ],
   }),
@@ -131,7 +127,7 @@ function RootShell({ children }: { children: ReactNode }) {
           style={{ display: "none" }}
           dangerouslySetInnerHTML={{
             __html:
-              "<!-- direction:hdu-rights-green | THESIS: 学生权益中心的绿色编辑风官网——墨绿大色块、奶油浅底、公版油画插图，首屏居中大字标题。 | OWN-WORLD: 奶油底 + 墨绿主色块 + 亮绿点缀；衬线大标题、细发丝线分区、无渐变、无黑框卡片。 | STORY: 访客一屏之内读懂全意为你，向下滚动依次看到服务、数据、公告与指南。 | FIRST VIEWPORT: 深墨绿全宽首屏，标题居中、无按钮；正下方整宽公版油画色带。 | FORM: 编辑式单页滚动（编号服务行 + 浅色统计块 + 细线列表），code-led（本会话无生图工具）。 | FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->",
+              "<!-- direction:hdu-su-official | THESIS: 校学生会官方门户风——藏青结构色 + 校会标四色识别 + 系统黑体，标语「让优秀成为一种习惯」贯穿顶条、首屏与页脚。 | OWN-WORLD: 冷白底 + 藏青 #1D2A61 主色块 + 红/金/青/紫四色点缀；黑体标题、细线分区、小圆角、无渐变、无书法体。 | STORY: 访客一屏内读懂全心权益全意为你与标语，向下依次看到服务、数据、公告与指南。 | FIRST VIEWPORT: 藏青标语顶条 + 白底官方导航 + 四色条，首屏左文右标语图。 | FORM: 官方门户式单页（编号服务行 + 四色统计块 + 细线列表），code-led。 | FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance. -->",
           }}
         />
         {children}

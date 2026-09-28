@@ -5,6 +5,7 @@ import {
   Search,
   FileText,
   ChevronRight,
+  ChevronDown,
   ArrowRight,
   Plus,
   Trash2,
@@ -56,17 +57,22 @@ function GuidePage() {
   const [query, setQuery] = useState("");
   const [files, setFiles] = useState<RemoteFile[]>([]);
   const [loadingFiles, setLoadingFiles] = useState(true);
+  const [filesError, setFilesError] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
 
   const toggle = (id: string) => setOpenId((cur) => (cur === id ? null : id));
 
   const refresh = async () => {
+    setFilesError(false);
+    setLoadingFiles(true);
     try {
       const res = await fetch("/api/get-files");
       const json = (await res.json()) as { ok: boolean; items?: RemoteFile[] };
+      if (!json.ok) throw new Error("接口返回失败");
       setFiles(json.items ?? []);
     } catch {
       setFiles([]);
+      setFilesError(true);
     } finally {
       setLoadingFiles(false);
     }
@@ -80,9 +86,7 @@ function GuidePage() {
     const q = query.trim().toLowerCase();
     if (!q) return GUIDE_SECTIONS;
     return GUIDE_SECTIONS.filter(
-      (s) =>
-        s.title.toLowerCase().includes(q) ||
-        s.desc?.toLowerCase().includes(q),
+      (s) => s.title.toLowerCase().includes(q) || s.desc?.toLowerCase().includes(q),
     );
   }, [query]);
 
@@ -99,14 +103,14 @@ function GuidePage() {
             <ChevronRight className="h-3.5 w-3.5" />
             <span className="text-foreground">校园指南</span>
           </div>
-          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+          <h1 className="reveal reveal-delay-1 mt-4 font-display text-3xl font-bold text-foreground sm:text-5xl">
             校园指南
           </h1>
           <p className="reveal reveal-delay-2 mt-3 max-w-2xl text-sm text-muted-foreground sm:text-base">
             17 个板块，覆盖政策文件、办事流程与常用平台。点击链接即可查看或下载对应 PDF。
           </p>
 
-          <div className="reveal reveal-delay-3 mt-8 flex max-w-2xl items-center gap-2 rounded-full border border-border bg-card p-2">
+          <div className="reveal reveal-delay-3 mt-8 flex max-w-2xl items-center gap-2 rounded-md border border-border bg-card p-2">
             <div className="flex flex-1 items-center gap-2 px-3">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
@@ -128,10 +132,8 @@ function GuidePage() {
       <main className="reveal mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)] lg:items-start lg:gap-12">
           {/* 板块导航 · 左侧栏 */}
-          <aside className="reveal lg:sticky lg:top-24">
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              板块导航
-            </p>
+          <aside className="reveal lg:sticky lg:top-28">
+            <p className="text-xs font-semibold tracking-[0.2em] text-muted-foreground">板块导航</p>
             <nav className="mt-3 flex gap-2 overflow-x-auto pb-2 lg:flex-col lg:overflow-visible lg:pb-0">
               {sections.map((s, i) => (
                 <a
@@ -155,7 +157,7 @@ function GuidePage() {
                 <p className="mt-1 text-xs text-muted-foreground">换一个关键词试试。</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {sections.map((s, i) => (
                   <SectionBlock
                     key={s.id}
@@ -163,6 +165,8 @@ function GuidePage() {
                     index={i + 1}
                     files={files}
                     loadingFiles={loadingFiles}
+                    filesError={filesError}
+                    onRetry={() => void refresh()}
                     onChanged={refresh}
                     open={openId === s.id}
                     onToggle={() => toggle(s.id)}
@@ -179,7 +183,7 @@ function GuidePage() {
                 </p>
               </div>
               <Link to="/feedback">
-                <Button className="rounded-full font-bold">
+                <Button className="font-bold">
                   去提交反馈
                   <ArrowRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -199,6 +203,8 @@ function SectionBlock({
   index,
   files,
   loadingFiles,
+  filesError,
+  onRetry,
   onChanged,
   open,
   onToggle,
@@ -207,6 +213,8 @@ function SectionBlock({
   index: number;
   files: RemoteFile[];
   loadingFiles: boolean;
+  filesError: boolean;
+  onRetry: () => void;
   onChanged: () => void | Promise<void>;
   open: boolean;
   onToggle: () => void;
@@ -218,22 +226,28 @@ function SectionBlock({
   return (
     <section
       id={section.id}
-      className="reveal scroll-mt-24 border-t border-border/70 pt-8 sm:pt-10"
+      className={`reveal scroll-mt-28 rounded-md border bg-card transition-colors ${
+        open ? "border-primary/40" : "border-border hover:border-primary/30"
+      }`}
     >
-      <div className="flex items-start justify-between gap-4">
-        <h2 className="flex-1 text-xl font-bold text-foreground sm:text-2xl">
+      <div className="flex items-start justify-between gap-4 p-4 sm:p-6">
+        <h2 className="min-w-0 flex-1 text-xl font-bold text-foreground sm:text-2xl">
           <button
             type="button"
             onClick={onToggle}
             aria-expanded={open}
             className="group flex w-full items-start gap-4 text-left"
           >
-            <div className="flex-1">
+            <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 text-xs font-medium text-primary">
-                <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-primary/10 px-2">
+                <span
+                  className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-2 text-[11px] font-bold transition-colors ${
+                    open ? "bg-primary text-primary-foreground" : "bg-primary/10 text-primary"
+                  }`}
+                >
                   {index}
                 </span>
-                <span className="uppercase tracking-wider">Section</span>
+                <span className="tracking-[0.2em]">板块</span>
               </div>
               <span className="mt-2 block text-xl font-bold text-foreground transition-colors group-hover:text-primary sm:text-2xl">
                 {section.title}
@@ -244,11 +258,18 @@ function SectionBlock({
                 </span>
               )}
             </div>
-            <ChevronRight
-              className={`mt-1 h-5 w-5 shrink-0 text-muted-foreground transition-transform duration-300 ${
-                open ? "rotate-90 text-foreground" : ""
+            <span
+              aria-hidden="true"
+              className={`mt-1 inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors ${
+                open
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-foreground group-hover:bg-primary group-hover:text-primary-foreground"
               }`}
-            />
+            >
+              <ChevronDown
+                className={`h-5 w-5 transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+              />
+            </span>
           </button>
         </h2>
         {isAdmin && <AdminUpload channel={section.id} onDone={onChanged} />}
@@ -260,7 +281,7 @@ function SectionBlock({
         }`}
       >
         <div className="overflow-hidden">
-          <div className="mt-6">
+          <div className="px-4 pb-4 sm:px-6 sm:pb-6">
             {hasMap ? (
               <div className="overflow-hidden">
                 <img
@@ -271,14 +292,30 @@ function SectionBlock({
               </div>
             ) : null}
 
-            {!loadingFiles && uploads.length > 0 ? (
+            {uploads.length > 0 ? (
               <ul className="divide-y divide-border/60">
                 {uploads.map((f) => (
                   <UploadedRow key={f.id} file={f} isAdmin={isAdmin} onDone={onChanged} />
                 ))}
               </ul>
-            ) : !loadingFiles && !hasMap ? (
-              <p className="rounded-xl border border-dashed border-border bg-card px-4 py-6 text-center text-sm text-muted-foreground">
+            ) : loadingFiles ? (
+              <p className="flex items-center justify-center gap-2 rounded-md border border-dashed border-border bg-background px-4 py-6 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                文件加载中…
+              </p>
+            ) : filesError ? (
+              <div className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
+                <p>文件列表加载失败，请检查网络后重试。</p>
+                <button
+                  type="button"
+                  onClick={onRetry}
+                  className="mt-3 inline-flex h-8 items-center rounded-md border border-input bg-card px-4 text-xs font-semibold text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                >
+                  重新加载
+                </button>
+              </div>
+            ) : !hasMap ? (
+              <p className="rounded-md border border-dashed border-border bg-background px-4 py-6 text-center text-sm text-muted-foreground">
                 该板块暂无上传文件
               </p>
             ) : null}
@@ -423,7 +460,7 @@ function UploadedRow({
           <span className="flex-1 text-sm text-foreground group-hover:text-primary">
             {file.name}
           </span>
-          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+          <span className="text-[10px] font-medium tracking-wide text-muted-foreground">
             {isPdf ? "PDF" : "文件"}
           </span>
         </a>

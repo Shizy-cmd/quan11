@@ -1,26 +1,31 @@
-import oilGreenfield from "@/assets/oil-greenfield.jpg";
+import slogan from "@/assets/hdsu-su-slogan.png";
+import { useReveal } from "@/hooks/use-reveal";
 
 export function Hero() {
+  const ref = useReveal<HTMLElement>();
+
   return (
-    <section className="relative flex min-h-[calc(100svh-4rem)] items-center justify-center overflow-hidden">
-      <img
-        src={oilGreenfield}
-        alt=""
-        aria-hidden="true"
-        className="absolute inset-0 h-full w-full scale-105 object-cover blur-[2px]"
-      />
-      <div className="absolute inset-0 bg-primary/55" />
-      <div className="relative mx-auto w-full max-w-5xl px-6 py-24">
-        <h1 className="font-art text-[clamp(3.25rem,13vw,8rem)] leading-[0.95] tracking-[-0.02em] text-primary-foreground">
-          <span className="block">全心权益</span>
-          <span className="block w-[calc(100%+16px)] text-right">
-            全意<span className="text-accent">为你</span>
-          </span>
-        </h1>
-        <p className="ml-auto mt-8 max-w-md text-right text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
-          你的校园权益服务平台：有问题就来反馈，有疑问看新生指北，
-          办事流程查校园指南，最新动态看权益公告。
-        </p>
+    <section ref={ref} className="border-b border-border bg-card">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 sm:py-16 md:grid-cols-2 md:gap-8 md:py-20">
+        <div className="reveal">
+          <p className="flex items-center gap-3 text-xs font-semibold text-primary">
+            <span aria-hidden="true" className="inline-block h-4 w-1 bg-accent" />
+            杭州电子科技大学学生会 · 学生权益中心
+          </p>
+          <h1 className="mt-5 font-display text-5xl font-bold leading-[1.15] text-primary sm:text-6xl">
+            全心权益
+            <br />
+            全意为你
+          </h1>
+          <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
+            校学生会官方服务平台：有问题就来反馈，有疑问看新生指北，
+            办事流程查校园指南，最新动态看权益公告。
+          </p>
+        </div>
+
+        <div className="reveal reveal-delay-1 flex justify-center md:justify-end">
+          <img src={slogan} alt="让优秀成为一种习惯" className="w-full max-w-md sm:max-w-lg" />
+        </div>
       </div>
     </section>
   );

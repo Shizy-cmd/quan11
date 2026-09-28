@@ -1,19 +1,27 @@
-// 生成站点图标：从 src/assets/hdsu-logo.jpg 生成 public/favicon.png 与 public/favicon.ico。
+// 生成站点图标：从 src/assets/hdsu-su-mark.png（校会标图形标）生成 public/favicon.png 与 public/favicon.ico。
 // 用法：node scripts/gen-favicon.mjs
 import sharp from "sharp";
 import { writeFileSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 
-const src = resolve("src/assets/hdsu-logo.jpg");
+const src = resolve("src/assets/hdsu-su-mark.png");
 const outDir = resolve("public");
 mkdirSync(outDir, { recursive: true });
 
-// PNG 图标（现代浏览器直接读取）
-const pngBuf = await sharp(src).resize(256, 256, { fit: "cover" }).png().toBuffer();
+// PNG 图标（现代浏览器直接读取）：透明底压平为白底，等比放入方形
+const pngBuf = await sharp(src)
+  .resize(256, 256, { fit: "contain", background: "#ffffff" })
+  .flatten({ background: "#ffffff" })
+  .png()
+  .toBuffer();
 writeFileSync(resolve(outDir, "favicon.png"), pngBuf);
 
 // ICO 图标（内嵌 32x32 PNG）
-const icoPng = await sharp(src).resize(32, 32, { fit: "cover" }).png().toBuffer();
+const icoPng = await sharp(src)
+  .resize(32, 32, { fit: "contain", background: "#ffffff" })
+  .flatten({ background: "#ffffff" })
+  .png()
+  .toBuffer();
 function buildIco(png) {
   // ICO header
   const header = Buffer.alloc(6);
