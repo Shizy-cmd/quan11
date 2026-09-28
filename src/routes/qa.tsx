@@ -261,6 +261,13 @@ function GuideRow({
 }) {
   const hasContent = Boolean((item.content ?? "").trim());
   const images = item.images ?? [];
+  // 正文按空行分段；段内的单个换行也要保留（配合 whitespace-pre-line），
+  // 否则编辑时的换行在前台会被 HTML 折叠成一整段。
+  const paragraphs = (item.content ?? "")
+    .replace(/\r\n?/g, "\n")
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 
   if (editMode) {
     return (
@@ -275,7 +282,7 @@ function GuideRow({
           <Textarea
             value={item.content ?? ""}
             onChange={(e) => onContent(e.target.value)}
-            placeholder="填写正文内容（留空则前台显示「待补充」）"
+            placeholder="填写正文内容（留空则前台显示「待补充」）；换行会原样保留，空一行开始新段落"
             rows={3}
             className="resize-y text-sm"
           />
@@ -359,17 +366,14 @@ function GuideRow({
           <div className="px-4 pb-4 sm:px-5 sm:pb-5">
             {hasContent ? (
               <>
-                {item.content
-                  ?.split("\n\n")
-                  .filter((p) => p.trim())
-                  .map((paragraph, i) => (
-                    <p
-                      key={i}
-                      className="mt-3 text-sm leading-relaxed text-muted-foreground first:mt-0"
-                    >
-                      {paragraph}
-                    </p>
-                  ))}
+                {paragraphs.map((paragraph, i) => (
+                  <p
+                    key={i}
+                    className="mt-3 whitespace-pre-line text-sm leading-relaxed text-muted-foreground first:mt-0"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
                 {images.length > 0 && (
                   <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
                     {images.map((src, i) => (

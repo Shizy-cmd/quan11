@@ -623,7 +623,7 @@ function FeedbackRow({
               <span className="text-muted-foreground">校区：</span>
               <span className="text-foreground">{item.campus || "—"}</span>
             </div>
-            <div className="rounded-sm bg-muted/50 p-3 text-sm leading-relaxed text-foreground">
+            <div className="whitespace-pre-line rounded-sm bg-muted/50 p-3 text-sm leading-relaxed text-foreground">
               {item.detail || "（无描述）"}
             </div>
             {item.attachments.length > 0 && (
